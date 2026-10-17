@@ -103,7 +103,8 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
     <h3>אֵיךְ מִתְקַדְּמִים?</h3>
     <div class="row">
       <button class="btn sel" data-mode="tap">👆 לוֹחֲצִים</button>
-      <button class="btn" data-mode="ai">🎤 קוֹרֵא בְּקוֹל</button>
+      <button class="btn" data-mode="mic">🎤 מִיקְרוֹפוֹן</button>
+      <button class="btn" data-mode="ai" id="ai-btn">🧠 מִיקְרוֹפוֹן חָכָם</button>
     </div>
     <div class="toggle"><span>הַבָּרָה אַחֲרֵי הַבָּרָה (בִּלְחִיצָה)</span><input type="checkbox" id="o-syl" checked></div>
     <div class="toggle"><span>הֲבָרוֹת בִּצְבָעִים</span><input type="checkbox" id="o-col"></div>
@@ -268,8 +269,10 @@ function matches(heardTok,w){
 // ---------- STATE ----------
 const $=id=>document.getElementById(id);
 const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem('rb_'+k))??d}catch(e){return d}},set:(k,v)=>localStorage.setItem('rb_'+k,JSON.stringify(v))};
-let opts={mode:(m=>m==='mic'?'ai':m)(store.get('mode','tap')),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
+let opts={mode:store.get('mode','tap'),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
 let sel=store.get('part',0);
+(function(){const k=new URLSearchParams(location.search).get('k');if(k){store.set('code',k);history.replaceState(null,'',location.pathname)}})();
+
 let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
 
 const CHEERS=["כָּל הַכָּבוֹד!","יוֹפִי!","אַלּוּף!","מְצֻיָּן!","וָואוּ!","אֵיזֶה תוֹתָח!","מַדְהִים!","נֶהְדָּר!","יֵשׁ!","סוּפֶּר!"];
@@ -317,6 +320,8 @@ $('save-text').onclick=async()=>{
   $('new-text').value='';$('new-title').value='';$('addbox').style.display='none';
   await loadLib();sel=0;selectText(t.id);
 };
+if(!store.get('code',''))$('ai-btn').style.display='none';
+if(opts.mode==='ai'&&!store.get('code',''))opts.mode='tap';
 document.querySelectorAll('[data-mode]').forEach(b=>{
   b.classList.toggle('sel',b.dataset.mode===opts.mode);
   b.onclick=()=>{opts.mode=b.dataset.mode;store.set('mode',opts.mode);document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('sel',x===b))};
@@ -333,7 +338,7 @@ $('home').onclick=()=>{stopMic();stopAI();renderParts();show('s-start')};
 
 function start(){
   const text=sel===-1?PARTS.map(p=>p.text).join(' '):PARTS[sel].text;
-  W=tokenize(text);wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
+  W=tokenize(text);FS=0;wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
   $('word').classList.toggle('colored',opts.col||opts.mode!=='tap');
   $('ctx').style.display=opts.ctx?'block':'none';
   show('s-read');audioInit();render();
@@ -341,9 +346,20 @@ function start(){
 }
 
 // ---------- RENDER ----------
+let FS=0;
+function computeFS(){
+  // one size for the whole part, sized by its longest word, so words never jump in size
+  const el=$('word');const base=Math.min(window.innerWidth*.19,150);
+  const avail=Math.min(window.innerWidth*.95,Math.max(window.innerWidth*.8,700))-90;
+  const m=document.createElement('div');m.id='measure';m.style.cssText=`position:absolute;visibility:hidden;white-space:nowrap;font-family:Alef;font-weight:700;letter-spacing:.06em;font-size:${base}px`;
+  document.body.appendChild(m);let maxW=0;
+  for(const w of W){m.textContent=w.pre+w.syl.join('')+w.post;maxW=Math.max(maxW,m.scrollWidth+w.syl.length*8)}
+  m.remove();FS=Math.max(40,Math.min(base,Math.floor(base*avail/Math.max(maxW,1))));
+}
+window.addEventListener('resize',()=>{if(W.length){FS=0;render()}});
 function render(done){
   const w=W[wi];if(!w)return;
-  const stepSyl=opts.mode==='tap'&&opts.syl;
+  const stepSyl=(opts.mode==='tap'&&opts.syl)||opts.mode==='ai';
   let h=w.pre?`<span class="punct">${w.pre}</span>`:'';
   w.syl.forEach((s,k)=>{
     let cls='syl c'+(k%2);
@@ -353,7 +369,7 @@ function render(done){
   if(w.post)h+=`<span class="punct">${w.post}</span>`;
   const el=$('word');el.innerHTML=h;el.classList.toggle('word-done',!!done);
   // auto-fit
-  el.style.fontSize='';requestAnimationFrame(()=>{const card=$('card');let fs=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>card.clientWidth-60&&fs>30){fs-=6;el.style.fontSize=fs+'px'}});
+  if(!FS)computeFS();el.style.fontSize=FS+'px';
   // progress
   const pct=wi/W.length*100;$('fill').style.width=pct+'%';$('rocket').style.right=pct+'%';
   $('stars').textContent='⭐ '+stars;
@@ -384,7 +400,7 @@ function wordDone(){
   const milestone=n%10===0&&n<W.length;
   if(Math.random()<.35||W[wi].end)cheer(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
   setTimeout(()=>{
-    wi++;si=0;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
+    wi++;si=0;ai.burstWord=-1;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
     if(wi>=W.length){finish();return}
     if(milestone){bigCheer(n)}
     render();
@@ -468,7 +484,6 @@ function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.d
 
 // ---------- AI MIC (server transcription) ----------
 const API='https://nonrealistically-riotistic-jaunita.ngrok-free.dev/plugins/reading-buddy/transcribe';
-(function(){const k=new URLSearchParams(location.search).get('k');if(k){store.set('code',k);history.replaceState(null,'',location.pathname)}})();
 function looseMatch(tok,w){
   const h=skel(tok);if(!h)return false;
   return targets(w).some(t=>{if(!t)return false;if(h===t)return true;if(h[0]!==t[0]&&t.length>2)return false;
@@ -490,8 +505,13 @@ async function startAI(){
     const now=Date.now();
     if(!ai.speech)noise=noise*.98+rms*.02;
     const thr=Math.max(.015,noise*2.5);
-    if(rms>thr){ai.lastVoice=now;if(!ai.speech){ai.speech=true;$('mic').querySelector('.dot').style.background='#20b26b'}}
-    if(ai.speech&&(now-ai.lastVoice>750||now-ai.segStart>7000)){ai.speech=false;$('mic').querySelector('.dot').style.background='';cut()}
+    if(rms>thr){
+      if(now-ai.lastVoice>220&&ai.lastVoice&&W[wi]&&!busy){ // new voice burst = next syllable
+        if(ai.burstWord!==wi){ai.burstWord=wi;si=0}else if(si<W[wi].syl.length-1)si++;
+        render();tick(si);
+      }
+      ai.lastVoice=now;if(!ai.speech){ai.speech=true;$('mic').querySelector('.dot').style.background='#20b26b'}}
+    if(ai.speech&&(now-ai.lastVoice>900||now-ai.segStart>8000)){ai.speech=false;$('mic').querySelector('.dot').style.background='';cut()}
     else if(!ai.speech&&now-ai.segStart>6000)cut(true); // drop silent audio
     ai.raf=requestAnimationFrame(loop)};
   loop();
@@ -518,15 +538,19 @@ async function sendSeg(blob){
     const j=await r.json();const text=(j.text||'').trim();
     $('heard').textContent=text?'🎧 '+text:'';
     if(!text||wi!==startWi&&wi>startWi+6)return;
-    const toks=text.split(/[\s,.?!״"]+/).filter(Boolean);
+    const fresh=text.split(/[\s,.?!״"]+/).filter(Boolean);
+    if(ai.carryWord!==wi)ai.carry=[];
+    const toks=[...(ai.carry||[]),...fresh];const wBefore=wi;
     // consume tokens in order; also try joining neighbours (syllable-by-syllable reading)
     let j2=0;
     while(j2<toks.length&&W[wi]){
       let hit=0;
       for(let n=1;n<=3&&j2+n<=toks.length;n++){if(looseMatch(toks.slice(j2,j2+n).join(''),W[wi])){hit=n;break}}
       if(!hit&&looseMatch(toks[j2],W[wi])) hit=1;
-      if(hit){await doneAsync();j2+=hit}else j2++;
+      if(hit){await doneAsync();j2+=hit;ai.carry=[]}else j2++;
     }
+    // keep unmatched pieces for the same word (slow syllable reading split across pauses)
+    if(wi===wBefore){ai.carry=toks.slice(-3);ai.carryWord=wi}else{ai.carry=[];ai.carryWord=-1}
   }catch(e){$('heard').textContent='אֵין חִבּוּר, אֶפְשָׁר לִלְחֹץ 👆'}
   finally{ai.busy--}
 }
