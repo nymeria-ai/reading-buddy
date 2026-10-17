@@ -103,7 +103,7 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
     <h3>אֵיךְ מִתְקַדְּמִים?</h3>
     <div class="row">
       <button class="btn sel" data-mode="tap">👆 לוֹחֲצִים</button>
-      <button class="btn" data-mode="mic">🎤 מִיקְרוֹפוֹן</button>
+      <button class="btn" data-mode="ai">🎤 קוֹרֵא בְּקוֹל</button>
     </div>
     <div class="toggle"><span>הַבָּרָה אַחֲרֵי הַבָּרָה (בִּלְחִיצָה)</span><input type="checkbox" id="o-syl" checked></div>
     <div class="toggle"><span>הֲבָרוֹת בִּצְבָעִים</span><input type="checkbox" id="o-col"></div>
@@ -268,7 +268,7 @@ function matches(heardTok,w){
 // ---------- STATE ----------
 const $=id=>document.getElementById(id);
 const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem('rb_'+k))??d}catch(e){return d}},set:(k,v)=>localStorage.setItem('rb_'+k,JSON.stringify(v))};
-let opts={mode:store.get('mode','tap'),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
+let opts={mode:(m=>m==='mic'?'ai':m)(store.get('mode','tap')),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
 let sel=store.get('part',0);
 let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
 
@@ -329,15 +329,15 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.to
 
 $('go').onclick=start;$('again').onclick=start;
 $('tohome').onclick=()=>{renderParts();show('s-start')};
-$('home').onclick=()=>{stopMic();renderParts();show('s-start')};
+$('home').onclick=()=>{stopMic();stopAI();renderParts();show('s-start')};
 
 function start(){
   const text=sel===-1?PARTS.map(p=>p.text).join(' '):PARTS[sel].text;
   W=tokenize(text);wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
-  $('word').classList.toggle('colored',opts.col||opts.mode==='mic');
+  $('word').classList.toggle('colored',opts.col||opts.mode!=='tap');
   $('ctx').style.display=opts.ctx?'block':'none';
   show('s-read');audioInit();render();
-  if(opts.mode==='mic')startMic();else{$('mic').style.display='none';$('heard').textContent=''}
+  $('heard').textContent='';if(opts.mode==='mic')startMic();else if(opts.mode==='ai')startAI();else $('mic').style.display='none'
 }
 
 // ---------- RENDER ----------
@@ -466,9 +466,76 @@ function startMic(){
 }
 function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.display='none'}
 
+// ---------- AI MIC (server transcription) ----------
+const API='https://nonrealistically-riotistic-jaunita.ngrok-free.dev/plugins/reading-buddy/transcribe';
+(function(){const k=new URLSearchParams(location.search).get('k');if(k){store.set('code',k);history.replaceState(null,'',location.pathname)}})();
+function looseMatch(tok,w){
+  const h=skel(tok);if(!h)return false;
+  return targets(w).some(t=>{if(!t)return false;if(h===t)return true;if(h[0]!==t[0]&&t.length>2)return false;
+    const allow=t.length<=2?0:t.length<=4?1:Math.floor(t.length*.45);return lev(h,t)<=allow});
+}
+let ai={on:false,stream:null,ctx:null,rec:null,chunks:[],speech:false,lastVoice:0,segStart:0,busy:0,raf:0};
+function pickMime(){for(const m of['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'])if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;return ''}
+async function startAI(){
+  if(!store.get('code','')){const c=prompt('קוד גישה (מגיא):');if(!c){$('heard').textContent='אֵין קוֹד, אֶפְשָׁר לִלְחֹץ 👆';return}store.set('code',c.trim())}
+  try{ai.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+  catch(e){$('heard').textContent='צָרִיךְ לְאַשֵּׁר מִיקְרוֹפוֹן 🎤';return}
+  ai.on=true;$('mic').style.display='flex';
+  ai.ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=ai.ctx.createMediaStreamSource(ai.stream),an=ai.ctx.createAnalyser();an.fftSize=1024;src.connect(an);
+  const buf=new Float32Array(an.fftSize);let noise=0.01;
+  newRec();
+  const loop=()=>{ if(!ai.on)return;
+    an.getFloatTimeDomainData(buf);let s=0;for(const v of buf)s+=v*v;const rms=Math.sqrt(s/buf.length);
+    const now=Date.now();
+    if(!ai.speech)noise=noise*.98+rms*.02;
+    const thr=Math.max(.015,noise*2.5);
+    if(rms>thr){ai.lastVoice=now;if(!ai.speech){ai.speech=true;$('mic').querySelector('.dot').style.background='#20b26b'}}
+    if(ai.speech&&(now-ai.lastVoice>750||now-ai.segStart>7000)){ai.speech=false;$('mic').querySelector('.dot').style.background='';cut()}
+    else if(!ai.speech&&now-ai.segStart>6000)cut(true); // drop silent audio
+    ai.raf=requestAnimationFrame(loop)};
+  loop();
+}
+function newRec(){
+  const m=pickMime();ai.chunks=[];ai.segStart=Date.now();
+  ai.rec=new MediaRecorder(ai.stream,m?{mimeType:m}:{});
+  ai.rec.ondataavailable=e=>{if(e.data.size)ai.chunks.push(e.data)};
+  ai.rec.start();
+}
+function cut(discard){
+  const r=ai.rec,chunks=ai.chunks;
+  r.onstop=()=>{if(!discard&&ai.on)sendSeg(new Blob(chunks,{type:r.mimeType||'audio/webm'}))};
+  try{r.stop()}catch(e){}
+  if(ai.on)newRec();
+}
+async function sendSeg(blob){
+  if(blob.size<3000)return;
+  const startWi=wi;const hint=W.slice(wi,wi+6).map(w=>w.core).join(' ');
+  ai.busy++;$('heard').textContent='🎧 …';
+  try{
+    const r=await fetch(API,{method:'POST',body:blob,headers:{'Content-Type':blob.type,'X-RB-Code':store.get('code',''),'X-RB-Prompt':encodeURIComponent(hint),'ngrok-skip-browser-warning':'1'}});
+    if(r.status===401){store.set('code','');$('heard').textContent='הַקּוֹד לֹא נָכוֹן';return}
+    const j=await r.json();const text=(j.text||'').trim();
+    $('heard').textContent=text?'🎧 '+text:'';
+    if(!text||wi!==startWi&&wi>startWi+6)return;
+    const toks=text.split(/[\s,.?!״"]+/).filter(Boolean);
+    // consume tokens in order; also try joining neighbours (syllable-by-syllable reading)
+    let j2=0;
+    while(j2<toks.length&&W[wi]){
+      let hit=0;
+      for(let n=1;n<=3&&j2+n<=toks.length;n++){if(looseMatch(toks.slice(j2,j2+n).join(''),W[wi])){hit=n;break}}
+      if(!hit&&looseMatch(toks[j2],W[wi])) hit=1;
+      if(hit){await doneAsync();j2+=hit}else j2++;
+    }
+  }catch(e){$('heard').textContent='אֵין חִבּוּר, אֶפְשָׁר לִלְחֹץ 👆'}
+  finally{ai.busy--}
+}
+function doneAsync(){return new Promise(res=>{const go=()=>{if(busy)return setTimeout(go,60);wordDone();setTimeout(res,opts.mode==='ai'?380:0)};go()})}
+function stopAI(){ai.on=false;cancelAnimationFrame(ai.raf);try{ai.rec&&ai.rec.state!=='inactive'&&ai.rec.stop()}catch(e){};ai.stream&&ai.stream.getTracks().forEach(t=>t.stop());ai.ctx&&ai.ctx.close();$('mic').style.display='none'}
+
 // ---------- FINISH ----------
 function finish(){
-  stopMic();
+  stopMic();stopAI();
   const secs=Math.round((Date.now()-t0)/1000);
   const best=store.get('best',{});const prev=best[bestKey(sel)];
   const rec={times:(prev?.times||0)+1,secs:prev?Math.min(prev.secs,secs):secs,last:secs};
