@@ -603,14 +603,16 @@ function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.d
 
 // ---------- AI MIC (server transcription) ----------
 const API='https://nonrealistically-riotistic-jaunita.ngrok-free.dev/plugins/reading-buddy/transcribe';
+// sound-alike letters (transcriber spells by sound): ט=ת, כ=ק=ח, ע=א, ב=ו, ס=שׂ ; drop silent א/ע/ה inside word
+function phon(s){if(!s)return s;s=s.replace(/ט/g,'ת').replace(/[כח]/g,'ק').replace(/ע/g,'א').replace(/ס/g,'ש').replace(/ב/g,'ו');return s[0]+s.slice(1).replace(/[אה]/g,'')}
 function looseMatch(tok,w){
-  // strict: same first letter, similar length, small edit distance
-  const h=skel(tok);if(!h)return false;
-  return targets(w).some(t=>{if(!t)return false;if(h===t)return true;
+  // strict: same first sound, similar length, small edit distance
+  const h=phon(skel(tok));if(!h)return false;
+  return targets(w).map(phon).some(t=>{if(!t)return false;if(h===t)return true;
     if(t.length<=2)return false;
     if(h[0]!==t[0])return false;
     if(Math.abs(h.length-t.length)>1)return false;
-    const allow=t.length<=5?1:2;return lev(h,t)<=allow});
+    const allow=t.length<=3?0:t.length<=5?1:2;return lev(h,t)<=allow});
 }
 let ai={on:false,stream:null,ctx:null,rec:null,chunks:[],speech:false,lastVoice:0,segStart:0,busy:0,raf:0};
 function pickMime(){for(const m of['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'])if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;return ''}
