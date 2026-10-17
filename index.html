@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>קוֹרְאִים בְּכֵיף 🚀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#5b6cff;--bg2:#9b5bff;--card:#fff;--ink:#1d2140;--done:#20b26b;--cur:#ff7a1a;--soft:#eef0ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:'Varela Round','Alef',system-ui,sans-serif;color:var(--ink)}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2));overflow:hidden;user-select:none;-webkit-user-select:none}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.screen.on{display:flex}
+h1{color:#fff;margin:10px 0 0;font-size:34px;text-shadow:0 3px 0 rgba(0,0,0,.15)}
+.sub{color:#e8e9ff;margin:0;font-size:17px}
+.panel{background:#fff;border-radius:24px;padding:18px;width:min(560px,100%);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.panel h3{margin:0 0 10px;font-size:18px}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font-family:inherit;border:0;border-radius:18px;padding:14px 12px;font-size:19px;cursor:pointer;background:var(--soft);color:var(--ink);font-weight:700;transition:transform .08s}
+.btn:active{transform:scale(.95)}
+.btn.sel{background:var(--cur);color:#fff}
+.btn.big{font-size:26px;padding:18px 30px;background:#ffd23f;box-shadow:0 6px 0 #d9a800}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .btn{flex:1}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;font-size:17px}
+.toggle input{width:26px;height:26px}
+input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-radius:14px;border:2px solid #dde;width:100%}
+.done-tag{font-size:13px;color:var(--done)}
+/* reading */
+#top{width:100%;max-width:900px;display:flex;align-items:center;gap:12px;color:#fff;font-size:22px}
+#stars{font-weight:700;min-width:70px}
+#track{flex:1;height:22px;background:rgba(255,255,255,.25);border-radius:11px;position:relative}
+#fill{position:absolute;inset:0 0 0 auto;width:0;background:#ffd23f;border-radius:11px;transition:width .4s}
+#rocket{position:absolute;top:-14px;font-size:30px;transition:right .4s;right:0;transform:translateX(50%) scaleX(-1)}
+#trophy{font-size:28px}
+#home{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:12px;font-size:22px;padding:4px 10px;font-family:inherit}
+#stage{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+#card{background:var(--card);border-radius:36px;min-width:min(80vw,700px);max-width:95vw;min-height:44vh;display:flex;align-items:center;justify-content:center;padding:24px 36px;box-shadow:0 16px 0 rgba(0,0,0,.12),0 20px 40px rgba(0,0,0,.2);cursor:pointer;position:relative}
+#word{font-family:'Alef',sans-serif;font-weight:700;font-size:min(19vw,150px);line-height:1.6;letter-spacing:.06em;white-space:nowrap;direction:rtl}
+#word.pop{animation:pop .45s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.syl{border-radius:18px;padding:0 4px;transition:all .2s}
+.syl.fut{color:var(--ink)}
+.syl.now{background:#fff1b8;color:var(--cur);box-shadow:inset 0 -8px 0 #ffd23f}
+.syl.past{color:var(--done)}
+.colored .syl.c0{color:#2a5bd7}.colored .syl.c1{color:#e2365b}
+.colored .syl.now{color:var(--cur)}
+.word-done .syl{color:var(--done)!important;background:none!important;box-shadow:none!important}
+.punct{color:#aab}
+#ctx{background:rgba(255,255,255,.92);border-radius:18px;padding:10px 18px;font-family:'Alef';font-size:24px;line-height:1.8;max-width:900px;text-align:center}
+#ctx .w{padding:0 2px;border-radius:6px}
+#ctx .w.r{color:#9aa}
+#ctx .w.c{background:#ffd23f;color:#000}
+#controls{display:flex;gap:14px;align-items:center;justify-content:center;width:100%;padding-bottom:6px}
+.cbtn{font-family:inherit;border:0;border-radius:22px;font-size:24px;padding:14px 22px;font-weight:700;cursor:pointer;background:#fff}
+#next{background:#ffd23f;font-size:30px;padding:16px 40px;box-shadow:0 6px 0 #d9a800}
+#next:active,.cbtn:active{transform:translateY(3px)}
+#help.nudge{animation:wig 1s infinite}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+#mic{display:none;color:#fff;font-size:16px;gap:8px;align-items:center}
+#mic .dot{width:14px;height:14px;border-radius:50%;background:#ff4d6d;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#heard{color:#e8e9ff;font-size:15px;min-height:20px}
+#cheer{position:fixed;left:50%;top:18%;transform:translate(-50%,0) scale(0);font-size:44px;font-weight:700;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.2);pointer-events:none;transition:transform .25s;white-space:nowrap;z-index:9}
+#cheer.show{transform:translate(-50%,0) scale(1)}
+.p{position:fixed;pointer-events:none;font-size:26px;z-index:8}
+#big{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(30,20,80,.55);z-index:10;color:#fff;text-align:center}
+#big.on{display:flex}
+#big .e{font-size:120px;animation:pop .6s}
+#big .t{font-size:44px;font-weight:700;margin:10px}
+/* end */
+.stat{font-size:22px;margin:6px 0}
+.stat b{font-size:34px;color:var(--cur)}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<section id="s-start" class="screen on">
+  <h1>קוֹרְאִים בְּכֵיף 🚀</h1>
+  <p class="sub">מִי הִמְצִיא אֶת הַטָּאקִי?</p>
+  <div class="panel">
+    <h3>אֵיךְ קוֹרְאִים לְךָ?</h3>
+    <input type="text" id="name" placeholder="הַשֵּׁם שֶׁלְּךָ">
+  </div>
+  <div class="panel">
+    <h3>מָה קוֹרְאִים הַיּוֹם?</h3>
+    <div class="parts" id="parts"></div>
+  </div>
+  <div class="panel">
+    <h3>אֵיךְ מִתְקַדְּמִים?</h3>
+    <div class="row">
+      <button class="btn sel" data-mode="tap">👆 לוֹחֲצִים</button>
+      <button class="btn" data-mode="mic">🎤 מִיקְרוֹפוֹן</button>
+    </div>
+    <div class="toggle"><span>הַבָּרָה אַחֲרֵי הַבָּרָה (בִּלְחִיצָה)</span><input type="checkbox" id="o-syl" checked></div>
+    <div class="toggle"><span>הֲבָרוֹת בִּצְבָעִים</span><input type="checkbox" id="o-col"></div>
+    <div class="toggle"><span>לְהַרְאוֹת אֶת הַמִּשְׁפָּט</span><input type="checkbox" id="o-ctx"></div>
+    <div class="toggle"><span>צְלִילִים</span><input type="checkbox" id="o-snd" checked></div>
+  </div>
+  <button class="btn big" id="go">יַאללָה מַתְחִילִים! 🚀</button>
+</section>
+
+<!-- READ -->
+<section id="s-read" class="screen">
+  <div id="top">
+    <button id="home">🏠</button>
+    <div id="stars">⭐ 0</div>
+    <div id="track"><div id="fill"></div><div id="rocket">🚀</div></div>
+    <div id="trophy">🏆</div>
+  </div>
+  <div id="mic"><span class="dot"></span><span>מַקְשִׁיבָה…</span></div>
+  <div id="heard"></div>
+  <div id="stage">
+    <div id="card"><div id="word"></div></div>
+    <div id="ctx" style="display:none"></div>
+  </div>
+  <div id="controls">
+    <button class="cbtn" id="back">→</button>
+    <button class="cbtn" id="help">🔈</button>
+    <button class="cbtn" id="next">הַבָּא ←</button>
+  </div>
+</section>
+
+<!-- END -->
+<section id="s-end" class="screen">
+  <h1 id="end-title">סִיַּמְתָּ! 🏆</h1>
+  <div class="panel" style="text-align:center" id="end-body"></div>
+  <div class="row" style="width:min(560px,100%)">
+    <button class="btn big" id="again">🔁 עוֹד פַּעַם</button>
+    <button class="btn big" id="tohome" style="background:#fff;box-shadow:0 6px 0 #ccd">🏠</button>
+  </div>
+</section>
+
+<div id="cheer"></div>
+<div id="big"><div class="e"></div><div class="t"></div></div>
+
+<script>
+// ---------- TEXT ----------
+const PARTS = [
+  {name:"חֵלֶק 1", text:`מִי הִמְצִיא אֶת הַטָּאקִי?
+טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.`},
+  {name:"חֵלֶק 2", text:`מִי שֶׁהִמְצִיא אֶת הַטָּאקִי הוּא חַיִּים שָׁפִיר. חַיִּים שָׁפִיר לָקַח מִשְׂחָק יָדוּעַ בְּשֵׁם "שְׁמוֹנֶה מְשַׁגֵּעַ" וְהוֹסִיף לוֹ קְלָפִים נוֹסָפִים עִם חֻקִּים חֲדָשִׁים. הַמִּשְׂחָק יָצָא לִפְנֵי יוֹתֵר מֵ־40 שָׁנָה [בִּשְׁנַת 1983] וְהָפַךְ לְהַצְלָחָה בְּיִשְׂרָאֵל וּבַאֲרָצוֹת נוֹסָפוֹת.`},
+  {name:"חֵלֶק 3", text:`מָה פֵּרוּשׁ הַמִּלָּה טָאקִי? טָאקִי בְּיַפָּנִית זֶה מַפַּל מַיִם. הַקְּלָף שֶׁעָלָיו מוֹפִיעָה הַמִּלָּה טָאקִי מְאַפְשֵׁר לִשְׁפֹּךְ אֶת כָּל הַקְּלָפִים מֵאוֹתוֹ צֶבַע.`},
+  {name:"חֵלֶק 4", text:`עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`},
+];
+// spoken forms for numbers
+const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"]};
+
+// ---------- HEBREW SYLLABLES ----------
+const MARK=/[\u0591-\u05C7]/, VOW=/[\u05B1-\u05BB\u05C7]/, SHVA='\u05B0', DAG='\u05BC';
+function clusters(s){const o=[];for(const ch of s){if(MARK.test(ch)&&o.length)o[o.length-1]+=ch;else o.push(ch)}return o}
+const isHeb=c=>/[\u05D0-\u05EA]/.test(c[0]);
+function isMater(c){ // וּ or וֹ used as a vowel
+  if(c[0]!=='ו')return false;
+  const other=/[\u05B1-\u05B8\u05BB\u05C7]/.test(c);
+  return !other && (c.includes(DAG)||c.includes('\u05B9')||c.includes('\u05BA'));
+}
+function syllabify(core){
+  const cs=clusters(core), out=[];
+  // split leading non-hebrew / digits pieces
+  for(let i=0;i<cs.length;i++){
+    const c=cs[i], last=out[out.length-1];
+    if(!isHeb(c)){ // digits / maqaf
+      if(c==='־'||c==='-'){ if(last) last.t+=c; continue }
+      if(last&&last.num){last.t+=c;continue}
+      out.push({t:c,v:true,num:true,sh:false});continue;
+    }
+    const vowel=VOW.test(c)&&!isMater(c), sh=c.includes(SHVA), mater=isMater(c);
+    const nextC=cs[i+1];
+    if(mater){
+      if(last&&!last.v&&!last.num){last.t+=c;last.v=true;last.sh=false}
+      else out.push({t:c,v:true,sh:false});
+      continue;
+    }
+    if(vowel){
+      // patach genuva at word end: יָדוּעַ
+      const isEnd=i===cs.length-1;
+      if(isEnd&&/[חעה]/.test(c[0])&&c.includes('\u05B7')&&last&&last.v&&!last.num){last.t+=c;continue}
+      out.push({t:c,v:true,sh:false});continue;
+    }
+    if(sh){
+      const isEnd=i===cs.length-1;
+      const na=!last||last.num||last.sh||(c.includes(DAG)&&!isEnd);
+      if(na) out.push({t:c,v:true,sh:true});
+      else {last.t+=c;last.sh=true}
+      continue;
+    }
+    // bare consonant
+    if(nextC&&isMater(nextC)){out.push({t:c,v:false,sh:false});continue}
+    if(last&&!last.num){last.t+=c;continue}
+    out.push({t:c,v:false,sh:false});
+  }
+  // merge a leading vowel-less fragment into next
+  if(out.length>1&&!out[0].v&&!out[0].num){out[1].t=out[0].t+out[1].t;out.shift()}
+  return out.map(o=>o.t);
+}
+function tokenize(text){
+  const words=[];
+  text.split(/\s+/).filter(Boolean).forEach(raw=>{
+    const m=raw.match(/^([^\u05D0-\u05EA0-9]*)(.*?)([^\u05D0-\u05EA\u05B0-\u05C70-9]*)$/);
+    const pre=m[1], core=m[2], post=m[3];
+    words.push({pre,core,post,syl:syllabify(core),end:/[.?!:]/.test(post)});
+  });
+  return words;
+}
+
+// ---------- MATCHING ----------
+const FIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+function skel(s){
+  s=s.replace(/[\u0591-\u05C7]/g,'').replace(/[^\u05D0-\u05EA0-9]/g,'');
+  s=s.replace(/[ךםןףץ]/g,c=>FIN[c]);
+  return s[0]?s[0]+s.slice(1).replace(/[וי]/g,''):'';
+}
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+function targets(w){
+  const plain=w.core.replace(/[\u0591-\u05C7]/g,'').replace(/[־-]/g,'');
+  const digits=plain.match(/\d+/);
+  if(digits){const pre=plain.replace(/\d+/,'');return (NUM_SAY[digits[0]]||[digits[0]]).flatMap(n=>[skel(pre+n),skel(n)])}
+  return [skel(w.core)];
+}
+function matches(heardTok,w){
+  const h=skel(heardTok); if(!h)return false;
+  return targets(w).some(t=>{ if(!t)return false; if(t.length<=2)return h===t; if(t.length<=3)return lev(h,t)<=(h.length>=3?1:0)&&h[0]===t[0]; return lev(h,t)<=1||(h.length>=5&&lev(h,t)<=2)});
+}
+
+// ---------- STATE ----------
+const $=id=>document.getElementById(id);
+const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem('rb_'+k))??d}catch(e){return d}},set:(k,v)=>localStorage.setItem('rb_'+k,JSON.stringify(v))};
+let opts={mode:store.get('mode','tap'),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
+let sel=store.get('part',0);
+let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
+
+const CHEERS=["כָּל הַכָּבוֹד!","יוֹפִי!","אַלּוּף!","מְצֻיָּן!","וָואוּ!","אֵיזֶה תוֹתָח!","מַדְהִים!","נֶהְדָּר!","יֵשׁ!","סוּפֶּר!"];
+const EMO=["⭐","🌟","✨","💫","🎉","💥","🔥","🦄","🚀","🏆"];
+const BIG=[["🎉","{n} מִלִּים!"],["🔥","אַתָּה עַל אֵשׁ!"],["🦸","גִּבּוֹר קְרִיאָה!"],["🚀","טָס קָדִימָה!"],["💪","אֵיזֶה כֹּחַ!"],["🏅","אַלּוּף הַקְּרִיאָה!"]];
+
+// ---------- START UI ----------
+function renderParts(){
+  const best=store.get('best',{});
+  $('parts').innerHTML='';
+  [...PARTS.map((p,i)=>({n:p.name,i})),{n:"כָּל הַטֶּקְסְט 📖",i:-1}].forEach(p=>{
+    const b=document.createElement('button');b.className='btn'+(p.i===sel?' sel':'');
+    b.innerHTML=p.n+(best[p.i]?`<div class="done-tag">✓ קָרָאתִי ${best[p.i].times} פְּעָמִים</div>`:'');
+    b.onclick=()=>{sel=p.i;store.set('part',sel);renderParts()};
+    $('parts').appendChild(b);
+  });
+}
+document.querySelectorAll('[data-mode]').forEach(b=>{
+  b.classList.toggle('sel',b.dataset.mode===opts.mode);
+  b.onclick=()=>{opts.mode=b.dataset.mode;store.set('mode',opts.mode);document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('sel',x===b))};
+});
+[['o-syl','syl'],['o-col','col'],['o-ctx','ctx'],['o-snd','snd']].forEach(([id,k])=>{$(id).checked=opts[k];$(id).onchange=e=>{opts[k]=e.target.checked;store.set(k,opts[k])}});
+$('name').value=store.get('name','');$('name').oninput=e=>store.set('name',e.target.value.trim());
+renderParts();
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
+
+$('go').onclick=start;$('again').onclick=start;
+$('tohome').onclick=()=>{renderParts();show('s-start')};
+$('home').onclick=()=>{stopMic();renderParts();show('s-start')};
+
+function start(){
+  const text=sel===-1?PARTS.map(p=>p.text).join(' '):PARTS[sel].text;
+  W=tokenize(text);wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
+  $('word').classList.toggle('colored',opts.col||opts.mode==='mic');
+  $('ctx').style.display=opts.ctx?'block':'none';
+  show('s-read');audioInit();render();
+  if(opts.mode==='mic')startMic();else{$('mic').style.display='none';$('heard').textContent=''}
+}
+
+// ---------- RENDER ----------
+function render(done){
+  const w=W[wi];if(!w)return;
+  const stepSyl=opts.mode==='tap'&&opts.syl;
+  let h=w.pre?`<span class="punct">${w.pre}</span>`:'';
+  w.syl.forEach((s,k)=>{
+    let cls='syl c'+(k%2);
+    if(stepSyl)cls+=k<si?' past':k===si?' now':' fut';
+    h+=`<span class="${cls}">${s}</span>`;
+  });
+  if(w.post)h+=`<span class="punct">${w.post}</span>`;
+  const el=$('word');el.innerHTML=h;el.classList.toggle('word-done',!!done);
+  // auto-fit
+  el.style.fontSize='';requestAnimationFrame(()=>{const card=$('card');let fs=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>card.clientWidth-60&&fs>30){fs-=6;el.style.fontSize=fs+'px'}});
+  // progress
+  const pct=wi/W.length*100;$('fill').style.width=pct+'%';$('rocket').style.right=pct+'%';
+  $('stars').textContent='⭐ '+stars;
+  if(opts.ctx)renderCtx();
+}
+function renderCtx(){
+  let s=wi;while(s>0&&!W[s-1].end)s--;let e=wi;while(e<W.length-1&&!W[e].end)e++;
+  let h='';for(let i=s;i<=e;i++)h+=`<span class="w ${i<wi?'r':i===wi?'c':''}">${W[i].pre}${W[i].core}${W[i].post}</span> `;
+  $('ctx').innerHTML=h;
+}
+
+// ---------- ADVANCE ----------
+function nextStep(){
+  const w=W[wi];if(!w)return;
+  if(opts.mode==='tap'&&opts.syl&&si<w.syl.length-1){si++;render();tick(si);return}
+  wordDone();
+}
+function prevStep(){
+  if(opts.mode==='tap'&&opts.syl&&si>0){si--;render();return}
+  if(wi>0){wi--;si=0;stars=Math.max(0,stars-1);render()}
+}
+let busy=false;
+function wordDone(){
+  if(busy)return;busy=true;
+  stars++;render(true);$('word').classList.remove('pop');void $('word').offsetWidth;$('word').classList.add('pop');
+  burst(6);ding();
+  const n=wi+1;
+  const milestone=n%10===0&&n<W.length;
+  if(Math.random()<.35||W[wi].end)cheer(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
+  setTimeout(()=>{
+    wi++;si=0;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
+    if(wi>=W.length){finish();return}
+    if(milestone){bigCheer(n)}
+    render();
+  },opts.mode==='mic'?350:450);
+}
+$('next').onclick=e=>{e.stopPropagation();nextStep()};
+$('card').onclick=()=>nextStep();
+$('back').onclick=()=>prevStep();
+document.addEventListener('keydown',e=>{if(!$('s-read').classList.contains('on'))return;if(e.key===' '||e.key==='Enter'||e.key==='ArrowLeft'){e.preventDefault();nextStep()}if(e.key==='Backspace'||e.key==='ArrowRight')prevStep()});
+
+// help: say word (or current syllable)
+$('help').onclick=()=>{
+  const w=W[wi];if(!w||!window.speechSynthesis)return;helpUsed++;
+  const stepSyl=opts.mode==='tap'&&opts.syl;
+  let t=stepSyl&&w.syl.length>1?w.syl[si]:w.core;
+  const plainDigits=t.replace(/[\u0591-\u05C7]/g,'');
+  speak(t);
+};
+let heVoice=null;
+function loadVoices(){const v=speechSynthesis.getVoices();heVoice=v.find(x=>/^he|^iw/i.test(x.lang))||null;$('help').style.display=heVoice?'':'none'}
+if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}else $('help').style.display='none';
+function speak(t){const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';if(heVoice)u.voice=heVoice;u.rate=.7;speechSynthesis.cancel();speechSynthesis.speak(u)}
+setInterval(()=>{if($('s-read').classList.contains('on')&&Date.now()-lastAdvance>9000)$('help').classList.add('nudge')},1000);
+
+// ---------- FX ----------
+function cheer(t){const c=$('cheer');c.textContent=t;c.classList.add('show');clearTimeout(c._t);c._t=setTimeout(()=>c.classList.remove('show'),900)}
+function burst(n){
+  const r=$('card').getBoundingClientRect();
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');p.className='p';p.textContent=EMO[Math.floor(Math.random()*EMO.length)];
+    const x=r.left+r.width/2,y=r.top+r.height/2;p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);
+    const a=Math.random()*Math.PI*2,d=120+Math.random()*180;
+    p.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d}px)) scale(1.3)`,opacity:0}],{duration:800+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>p.remove();
+  }
+}
+function bigCheer(n){
+  const [e,t]=BIG[Math.floor(n/10-1)%BIG.length];const name=store.get('name','');
+  $('big').querySelector('.e').textContent=e;
+  $('big').querySelector('.t').textContent=t.replace('{n}',n)+(name?` ${name}!`:'');
+  $('big').classList.add('on');fanfare();burst(24);
+  setTimeout(()=>$('big').classList.remove('on'),1800);
+}
+$('big').onclick=()=>$('big').classList.remove('on');
+
+// ---------- SOUND ----------
+let AC=null;function audioInit(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}AC&&AC.resume&&AC.resume()}
+function tone(f,t0,d,type='sine',v=.15){if(!AC||!opts.snd)return;const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t0+d);o.connect(g).connect(AC.destination);o.start(AC.currentTime+t0);o.stop(AC.currentTime+t0+d)}
+function tick(k){tone(520+k*60,0,.08,'triangle',.08)}
+function ding(){const b=660+(stars%5)*40;tone(b,0,.15);tone(b*1.5,.08,.25)}
+function fanfare(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle',.18))}
+
+// ---------- MIC ----------
+let rec=null,micOn=false,consumed={};
+function startMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){$('heard').textContent='הַמִּיקְרוֹפוֹן לֹא נִתְמָךְ בַּדַּפְדְּפָן הַזֶּה. אֶפְשָׁר לִלְחֹץ.';return}
+  rec=new SR();rec.lang='he-IL';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=3;
+  micOn=true;consumed={};$('mic').style.display='flex';
+  rec.onresult=ev=>{
+    for(let r=ev.resultIndex;r<ev.results.length;r++){
+      const res=ev.results[r];
+      // use best alternative, but accept a match from any alternative
+      const alts=[...res].map(a=>a.transcript.trim().split(/\s+/));
+      $('heard').textContent='🎧 '+res[0].transcript;
+      let start=consumed[r]||0, toks=alts[0];
+      for(let j=start;j<toks.length;j++){
+        if(!W[wi]||busy)break;
+        if(matches(toks[j],W[wi])){consumed[r]=j+1;wordDone();}
+        else if(W[wi+1]&&matches(toks[j],W[wi+1])&&W[wi].core.length<=4){consumed[r]=j+1;wi++;stars++;wordDone();} // skipped a tiny word
+      }
+      if((consumed[r]||0)===start){ // try alternatives on the last token
+        for(const a of alts.slice(1)){const t=a[a.length-1];if(t&&W[wi]&&!busy&&matches(t,W[wi])){consumed[r]=Math.max(start,toks.length);wordDone();break}}
+      }
+    }
+  };
+  rec.onerror=e=>{if(e.error==='not-allowed'){$('heard').textContent='צָרִיךְ לְאַשֵּׁר מִיקְרוֹפוֹן 🎤';micOn=false}};
+  rec.onend=()=>{consumed={};if(micOn&&$('s-read').classList.contains('on'))try{rec.start()}catch(e){}};
+  try{rec.start()}catch(e){}
+}
+function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.display='none'}
+
+// ---------- FINISH ----------
+function finish(){
+  stopMic();
+  const secs=Math.round((Date.now()-t0)/1000);
+  const best=store.get('best',{});const prev=best[sel];
+  const rec={times:(prev?.times||0)+1,secs:prev?Math.min(prev.secs,secs):secs,last:secs};
+  best[sel]=rec;store.set('best',best);
+  const name=store.get('name','');
+  const hist=store.get('hist',[]);hist.push({d:new Date().toISOString(),part:sel,words:W.length,secs,help:helpUsed,mode:opts.mode});store.set('hist',hist.slice(-200));
+  $('end-title').textContent=(name?`${name}, `:'')+'סִיַּמְתָּ! 🏆';
+  const mm=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  let faster='';
+  if(prev&&secs<prev.last)faster=`<div class="stat">🚀 הַיּוֹם הָיִיתָ מָהִיר יוֹתֵר מִפַּעַם קוֹדֶמֶת!</div>`;
+  else if(prev)faster=`<div class="stat">💪 כָּל קְרִיאָה מְחַזֶּקֶת אוֹתְךָ!</div>`;
+  $('end-body').innerHTML=`<div style="font-size:90px">🏆</div>
+    <div class="stat">קָרָאתָ <b>${W.length}</b> מִלִּים!</div>
+    <div class="stat">⭐ <b>${stars}</b> כּוֹכָבִים</div>
+    ${faster}
+    <div style="color:#99a;font-size:14px;margin-top:10px">לַהוֹרִים: זְמַן ${mm(secs)}${prev?` · פַּעַם קוֹדֶמֶת ${mm(prev.last)}`:''} · עֶזְרָה 🔈 ${helpUsed} · פַּעַם מִסְפָּר ${rec.times}</div>`;
+  show('s-end');fanfare();setTimeout(()=>burst(30),200);setTimeout(()=>burst(30),700);
+}
+</script>
+</body>
+</html>
