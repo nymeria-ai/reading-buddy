@@ -11,7 +11,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;font-family:'Varela Round','Alef',system-ui,sans-serif;color:var(--ink)}
 body{background:linear-gradient(160deg,var(--bg1),var(--bg2));overflow:hidden;user-select:none;-webkit-user-select:none}
-.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;padding:16px;gap:14px}
+.screen{position:absolute;inset:0;display:none;overflow-y:auto;flex-direction:column;align-items:center;padding:16px;gap:14px}
 .screen.on{display:flex}
 h1{color:#fff;margin:10px 0 0;font-size:34px;text-shadow:0 3px 0 rgba(0,0,0,.15)}
 .sub{color:#e8e9ff;margin:0;font-size:17px}
@@ -80,10 +80,20 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
 <!-- START -->
 <section id="s-start" class="screen on">
   <h1>קוֹרְאִים בְּכֵיף 🚀</h1>
-  <p class="sub">מִי הִמְצִיא אֶת הַטָּאקִי?</p>
+  <p class="sub" id="cur-title"></p>
   <div class="panel">
     <h3>אֵיךְ קוֹרְאִים לְךָ?</h3>
     <input type="text" id="name" placeholder="הַשֵּׁם שֶׁלְּךָ">
+  </div>
+  <div class="panel">
+    <h3>אֵיזֶה טֶקְסְט?</h3>
+    <div class="parts" id="texts" style="grid-template-columns:1fr"></div>
+    <button class="btn" id="add" style="width:100%;margin-top:10px">➕ טֶקְסְט חָדָשׁ</button>
+    <div id="addbox" style="display:none;margin-top:10px">
+      <input type="text" id="new-title" placeholder="כּוֹתֶרֶת (לֹא חוֹבָה)" style="margin-bottom:8px">
+      <textarea id="new-text" placeholder="מַדְבִּיקִים כָּאן אֶת הַטֶּקְסְט (עָדִיף עִם נִקּוּד). שׁוּרָה רֵיקָה = פִּסְקָה חֲדָשָׁה" style="width:100%;height:160px;font-family:Alef;font-size:18px;border-radius:14px;border:2px solid #dde;padding:10px"></textarea>
+      <button class="btn" id="save-text" style="width:100%;margin-top:8px;background:#20b26b;color:#fff">שְׁמִירָה</button>
+    </div>
   </div>
   <div class="panel">
     <h3>מָה קוֹרְאִים הַיּוֹם?</h3>
@@ -138,14 +148,43 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
 <div id="big"><div class="e"></div><div class="t"></div></div>
 
 <script>
-// ---------- TEXT ----------
-const PARTS = [
-  {name:"חֵלֶק 1", text:`מִי הִמְצִיא אֶת הַטָּאקִי?
-טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.`},
-  {name:"חֵלֶק 2", text:`מִי שֶׁהִמְצִיא אֶת הַטָּאקִי הוּא חַיִּים שָׁפִיר. חַיִּים שָׁפִיר לָקַח מִשְׂחָק יָדוּעַ בְּשֵׁם "שְׁמוֹנֶה מְשַׁגֵּעַ" וְהוֹסִיף לוֹ קְלָפִים נוֹסָפִים עִם חֻקִּים חֲדָשִׁים. הַמִּשְׂחָק יָצָא לִפְנֵי יוֹתֵר מֵ־40 שָׁנָה [בִּשְׁנַת 1983] וְהָפַךְ לְהַצְלָחָה בְּיִשְׂרָאֵל וּבַאֲרָצוֹת נוֹסָפוֹת.`},
-  {name:"חֵלֶק 3", text:`מָה פֵּרוּשׁ הַמִּלָּה טָאקִי? טָאקִי בְּיַפָּנִית זֶה מַפַּל מַיִם. הַקְּלָף שֶׁעָלָיו מוֹפִיעָה הַמִּלָּה טָאקִי מְאַפְשֵׁר לִשְׁפֹּךְ אֶת כָּל הַקְּלָפִים מֵאוֹתוֹ צֶבַע.`},
-  {name:"חֵלֶק 4", text:`עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`},
+// ---------- TEXT LIBRARY ----------
+const BUILTIN = [
+ {id:"taki", title:"מִי הִמְצִיא אֶת הַטָּאקִי?", text:`מִי הִמְצִיא אֶת הַטָּאקִי?
+טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.
+
+מִי שֶׁהִמְצִיא אֶת הַטָּאקִי הוּא חַיִּים שָׁפִיר. חַיִּים שָׁפִיר לָקַח מִשְׂחָק יָדוּעַ בְּשֵׁם "שְׁמוֹנֶה מְשַׁגֵּעַ" וְהוֹסִיף לוֹ קְלָפִים נוֹסָפִים עִם חֻקִּים חֲדָשִׁים. הַמִּשְׂחָק יָצָא לִפְנֵי יוֹתֵר מֵ־40 שָׁנָה [בִּשְׁנַת 1983] וְהָפַךְ לְהַצְלָחָה בְּיִשְׂרָאֵל וּבַאֲרָצוֹת נוֹסָפוֹת.
+
+מָה פֵּרוּשׁ הַמִּלָּה טָאקִי? טָאקִי בְּיַפָּנִית זֶה מַפַּל מַיִם. הַקְּלָף שֶׁעָלָיו מוֹפִיעָה הַמִּלָּה טָאקִי מְאַפְשֵׁר לִשְׁפֹּךְ אֶת כָּל הַקְּלָפִים מֵאוֹתוֹ צֶבַע.
+
+עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`}
 ];
+let LIB=[];
+async function loadLib(){
+  let remote=[];
+  try{const r=await fetch('texts.json?'+Date.now());if(r.ok)remote=await r.json()}catch(e){}
+  const ids=new Set(remote.map(t=>t.id));
+  LIB=[...remote,...BUILTIN.filter(t=>!ids.has(t.id)),...store.get('custom',[])];
+}
+// split a text into parts: by paragraphs, merged/split to ~20-45 words
+function splitParts(text){
+  const paras=text.split(/\n\s*\n/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
+  const out=[];let cur='';
+  const wc=s=>s.split(' ').filter(Boolean).length;
+  for(const p of paras){
+    if(wc(p)>45){ // split long paragraph by sentences
+      const sents=p.match(/[^.?!]+[.?!"]*\s*/g)||[p];
+      for(const s of sents){ if(cur&&wc(cur)+wc(s)>40){out.push(cur.trim());cur=''} cur+=s+' ' }
+      continue;
+    }
+    if(cur&&wc(cur)+wc(p)>40){out.push(cur.trim());cur=''}
+    cur+=p+' ';
+    if(wc(cur)>=20){out.push(cur.trim());cur=''}
+  }
+  if(cur.trim()){ if(out.length&&wc(cur)<8)out[out.length-1]+=' '+cur.trim(); else out.push(cur.trim()) }
+  return out;
+}
+let curText=null, PARTS=[];
 // spoken forms for numbers
 const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"]};
 
@@ -238,23 +277,53 @@ const EMO=["⭐","🌟","✨","💫","🎉","💥","🔥","🦄","🚀","🏆"];
 const BIG=[["🎉","{n} מִלִּים!"],["🔥","אַתָּה עַל אֵשׁ!"],["🦸","גִּבּוֹר קְרִיאָה!"],["🚀","טָס קָדִימָה!"],["💪","אֵיזֶה כֹּחַ!"],["🏅","אַלּוּף הַקְּרִיאָה!"]];
 
 // ---------- START UI ----------
+function bestKey(i){return curText.id+':'+i}
+function renderTexts(){
+  $('texts').innerHTML='';
+  LIB.forEach(t=>{
+    const b=document.createElement('button');b.className='btn'+(t.id===curText.id?' sel':'');
+    b.style.textAlign='right';b.textContent=t.title;
+    b.onclick=()=>{selectText(t.id)};
+    if(t.custom){const x=document.createElement('span');x.textContent=' 🗑';x.style.float='left';x.onclick=e=>{e.stopPropagation();if(confirm('למחוק את הטקסט?')){store.set('custom',store.get('custom',[]).filter(c=>c.id!==t.id));loadLib().then(()=>selectText(LIB[0].id))}};b.appendChild(x)}
+    $('texts').appendChild(b);
+  });
+}
+function selectText(id){
+  curText=LIB.find(t=>t.id===id)||LIB[0];store.set('text',curText.id);
+  PARTS=splitParts(curText.text).map((t,i)=>({name:'חֵלֶק '+(i+1),text:t}));
+  if(sel>=PARTS.length)sel=0;
+  $('cur-title').textContent=curText.title;
+  renderTexts();renderParts();
+}
 function renderParts(){
   const best=store.get('best',{});
   $('parts').innerHTML='';
-  [...PARTS.map((p,i)=>({n:p.name,i})),{n:"כָּל הַטֶּקְסְט 📖",i:-1}].forEach(p=>{
+  const items=PARTS.map((p,i)=>({n:p.name,i,prev:p.text.split(' ').slice(0,3).join(' ')+'…'}));
+  if(PARTS.length>1)items.push({n:"כָּל הַטֶּקְסְט 📖",i:-1,prev:''});
+  items.forEach(p=>{
     const b=document.createElement('button');b.className='btn'+(p.i===sel?' sel':'');
-    b.innerHTML=p.n+(best[p.i]?`<div class="done-tag">✓ קָרָאתִי ${best[p.i].times} פְּעָמִים</div>`:'');
+    const r=best[bestKey(p.i)];
+    b.innerHTML=p.n+(p.prev?`<div style="font-size:13px;font-weight:400;opacity:.75">${p.prev}</div>`:'')+(r?`<div class="done-tag">✓ קָרָאתִי ${r.times} פְּעָמִים</div>`:'');
     b.onclick=()=>{sel=p.i;store.set('part',sel);renderParts()};
     $('parts').appendChild(b);
   });
 }
+$('add').onclick=()=>{$('addbox').style.display=$('addbox').style.display==='none'?'block':'none'};
+$('save-text').onclick=async()=>{
+  const text=$('new-text').value.trim();if(!text)return;
+  const title=$('new-title').value.trim()||text.split(/\s+/).slice(0,4).join(' ')+'…';
+  const t={id:'c'+Date.now(),title,text,custom:true};
+  store.set('custom',[...store.get('custom',[]),t]);
+  $('new-text').value='';$('new-title').value='';$('addbox').style.display='none';
+  await loadLib();sel=0;selectText(t.id);
+};
 document.querySelectorAll('[data-mode]').forEach(b=>{
   b.classList.toggle('sel',b.dataset.mode===opts.mode);
   b.onclick=()=>{opts.mode=b.dataset.mode;store.set('mode',opts.mode);document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('sel',x===b))};
 });
 [['o-syl','syl'],['o-col','col'],['o-ctx','ctx'],['o-snd','snd']].forEach(([id,k])=>{$(id).checked=opts[k];$(id).onchange=e=>{opts[k]=e.target.checked;store.set(k,opts[k])}});
 $('name').value=store.get('name','');$('name').oninput=e=>store.set('name',e.target.value.trim());
-renderParts();
+loadLib().then(()=>selectText(new URLSearchParams(location.search).get('t')||store.get('text','taki')));
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
 
@@ -401,11 +470,11 @@ function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.d
 function finish(){
   stopMic();
   const secs=Math.round((Date.now()-t0)/1000);
-  const best=store.get('best',{});const prev=best[sel];
+  const best=store.get('best',{});const prev=best[bestKey(sel)];
   const rec={times:(prev?.times||0)+1,secs:prev?Math.min(prev.secs,secs):secs,last:secs};
-  best[sel]=rec;store.set('best',best);
+  best[bestKey(sel)]=rec;store.set('best',best);
   const name=store.get('name','');
-  const hist=store.get('hist',[]);hist.push({d:new Date().toISOString(),part:sel,words:W.length,secs,help:helpUsed,mode:opts.mode});store.set('hist',hist.slice(-200));
+  const hist=store.get('hist',[]);hist.push({d:new Date().toISOString(),text:curText.id,part:sel,words:W.length,secs,help:helpUsed,mode:opts.mode});store.set('hist',hist.slice(-200));
   $('end-title').textContent=(name?`${name}, `:'')+'סִיַּמְתָּ! 🏆';
   const mm=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
   let faster='';
