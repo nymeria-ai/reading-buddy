@@ -3,83 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>קוֹרְאִים בְּכֵיף 🚀</title>
+<title>קוֹרְאִים עִם פַּנְדָּה 🐼</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
 <style>
-:root{--bg1:#5b6cff;--bg2:#9b5bff;--card:#fff;--ink:#1d2140;--done:#20b26b;--cur:#ff7a1a;--soft:#eef0ff}
+:root{--g1:#2f9e55;--g2:#1f7a43;--card:#fff;--ink:#22252b;--done:#1f9d55;--cur:#ff8a00;--soft:#eef7ef;--gold:#ffd23f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;font-family:'Varela Round','Alef',system-ui,sans-serif;color:var(--ink)}
-body{background:linear-gradient(160deg,var(--bg1),var(--bg2));overflow:hidden;user-select:none;-webkit-user-select:none}
+body{overflow:hidden;user-select:none;-webkit-user-select:none;
+ background:repeating-linear-gradient(90deg,#33a35a 0 80px,#2e9853 80px 160px);}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.25),transparent 60%);pointer-events:none}
 .screen{position:absolute;inset:0;display:none;overflow-y:auto;flex-direction:column;align-items:center;padding:16px;gap:14px}
 .screen.on{display:flex}
-h1{color:#fff;margin:10px 0 0;font-size:34px;text-shadow:0 3px 0 rgba(0,0,0,.15)}
-.sub{color:#e8e9ff;margin:0;font-size:17px}
-.panel{background:#fff;border-radius:24px;padding:18px;width:min(560px,100%);box-shadow:0 10px 30px rgba(0,0,0,.18)}
-.panel h3{margin:0 0 10px;font-size:18px}
+h1{color:#fff;margin:4px 0 0;font-size:36px;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.sub{color:#e9ffe9;margin:0;font-size:18px}
+.panel{background:#fff;border-radius:26px;padding:18px;width:min(560px,100%);box-shadow:0 8px 0 rgba(0,0,0,.12);border:4px solid #22252b}
+.panel h3{margin:0 0 10px;font-size:19px}
 .parts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{font-family:inherit;border:0;border-radius:18px;padding:14px 12px;font-size:19px;cursor:pointer;background:var(--soft);color:var(--ink);font-weight:700;transition:transform .08s}
+.btn{font-family:inherit;border:3px solid transparent;border-radius:18px;padding:12px 12px;font-size:19px;cursor:pointer;background:var(--soft);color:var(--ink);font-weight:700;transition:transform .08s;position:relative;overflow:hidden}
 .btn:active{transform:scale(.95)}
-.btn.sel{background:var(--cur);color:#fff}
-.btn.big{font-size:26px;padding:18px 30px;background:#ffd23f;box-shadow:0 6px 0 #d9a800}
+.btn.sel{background:#22252b;color:#fff;border-color:var(--gold)}
+.btn .thumb{width:100%;height:70px;object-fit:cover;border-radius:12px;display:block;margin-bottom:6px}
+.btn.big{font-size:26px;padding:18px 30px;background:var(--gold);box-shadow:0 6px 0 #c99a00;border:4px solid #22252b}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .btn{flex:1}
 .toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;font-size:17px}
-.toggle input{width:26px;height:26px}
-input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-radius:14px;border:2px solid #dde;width:100%}
+.toggle input{width:26px;height:26px;accent-color:#1f9d55}
+input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-radius:14px;border:2px solid #cde3d2;width:100%}
 .done-tag{font-size:13px;color:var(--done)}
+.btn.sel .done-tag{color:var(--gold)}
+#hero{display:flex;align-items:flex-end;gap:6px;margin-top:6px}
+#hero img{height:170px;filter:drop-shadow(0 8px 6px rgba(0,0,0,.3));animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.bubble{background:#fff;border:4px solid #22252b;border-radius:22px;padding:10px 16px;font-size:20px;font-weight:700;position:relative;max-width:260px}
+.bubble:after{content:"";position:absolute;bottom:14px;left:-14px;border:10px solid transparent;border-right-color:#22252b}
 /* reading */
-#top{width:100%;max-width:900px;display:flex;align-items:center;gap:12px;color:#fff;font-size:22px}
-#stars{font-weight:700;min-width:70px}
-#track{flex:1;height:22px;background:rgba(255,255,255,.25);border-radius:11px;position:relative}
-#fill{position:absolute;inset:0 0 0 auto;width:0;background:#ffd23f;border-radius:11px;transition:width .4s}
-#rocket{position:absolute;top:-14px;font-size:30px;transition:right .4s;right:0;transform:translateX(50%) scaleX(-1)}
-#trophy{font-size:28px}
-#home{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:12px;font-size:22px;padding:4px 10px;font-family:inherit}
+#top{width:100%;max-width:960px;display:flex;align-items:center;gap:12px;color:#fff;font-size:22px}
+#stars{font-weight:700;min-width:70px;background:rgba(0,0,0,.25);border-radius:14px;padding:4px 10px}
+#track{flex:1;height:24px;background:rgba(255,255,255,.3);border-radius:12px;position:relative;border:3px solid rgba(255,255,255,.6)}
+#fill{position:absolute;inset:0 0 0 auto;width:0;background:#fff;border-radius:10px;transition:width .4s}
+#rocket{position:absolute;top:-12px;font-size:32px;transition:right .4s;right:0;transform:translateX(50%)}
+#rocket.kick{animation:spin .5s}
+@keyframes spin{to{transform:translateX(50%) rotate(-360deg)}}
+#trophy{font-size:30px}
+#home{background:rgba(0,0,0,.25);color:#fff;border:0;border-radius:12px;font-size:22px;padding:4px 10px;font-family:inherit}
+#scene{position:fixed;top:64px;left:14px;width:min(22vw,190px);border-radius:18px;border:4px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.3);display:none;transform:rotate(-3deg);cursor:pointer}
 #stage{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
-#card{background:var(--card);border-radius:36px;min-width:min(80vw,700px);max-width:95vw;min-height:44vh;display:flex;align-items:center;justify-content:center;padding:24px 36px;box-shadow:0 16px 0 rgba(0,0,0,.12),0 20px 40px rgba(0,0,0,.2);cursor:pointer;position:relative}
+#card{background:var(--card);border-radius:36px;min-width:min(80vw,700px);max-width:95vw;min-height:40vh;display:flex;align-items:center;justify-content:center;padding:24px 36px;box-shadow:0 14px 0 rgba(0,0,0,.18);border:5px solid #22252b;cursor:pointer;position:relative}
 #word{font-family:'Alef',sans-serif;font-weight:700;font-size:min(19vw,150px);line-height:1.6;letter-spacing:.06em;white-space:nowrap;direction:rtl}
 #word.pop{animation:pop .45s}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
 .syl{border-radius:18px;padding:0 4px;transition:all .2s}
 .syl.fut{color:var(--ink)}
-.syl.now{background:#fff1b8;color:var(--cur);box-shadow:inset 0 -8px 0 #ffd23f}
+.syl.now{background:#fff1b8;color:var(--cur);box-shadow:inset 0 -8px 0 var(--gold)}
 .syl.past{color:var(--done)}
-.colored .syl.c0{color:#2a5bd7}.colored .syl.c1{color:#e2365b}
+.colored .syl.c0{color:#22252b}.colored .syl.c1{color:#1f7ae0}
 .colored .syl.now{color:var(--cur)}
 .word-done .syl{color:var(--done)!important;background:none!important;box-shadow:none!important}
 .punct{color:#aab}
-#ctx{background:rgba(255,255,255,.92);border-radius:18px;padding:10px 18px;font-family:'Alef';font-size:24px;line-height:1.8;max-width:900px;text-align:center}
+#ctx{background:rgba(255,255,255,.95);border-radius:18px;padding:10px 18px;font-family:'Alef';font-size:24px;line-height:1.8;max-width:900px;text-align:center;border:3px solid #22252b}
 #ctx .w{padding:0 2px;border-radius:6px}
 #ctx .w.r{color:#9aa}
-#ctx .w.c{background:#ffd23f;color:#000}
+#ctx .w.c{background:var(--gold);color:#000}
 #controls{display:flex;gap:14px;align-items:center;justify-content:center;width:100%;padding-bottom:6px}
-.cbtn{font-family:inherit;border:0;border-radius:22px;font-size:24px;padding:14px 22px;font-weight:700;cursor:pointer;background:#fff}
-#next{background:#ffd23f;font-size:30px;padding:16px 40px;box-shadow:0 6px 0 #d9a800}
+.cbtn{font-family:inherit;border:4px solid #22252b;border-radius:22px;font-size:24px;padding:12px 22px;font-weight:700;cursor:pointer;background:#fff}
+#next{background:var(--gold);font-size:30px;padding:14px 40px;box-shadow:0 6px 0 #c99a00}
 #next:active,.cbtn:active{transform:translateY(3px)}
 #help.nudge{animation:wig 1s infinite}
 @keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
 #mic{display:none;color:#fff;font-size:16px;gap:8px;align-items:center}
 #mic .dot{width:14px;height:14px;border-radius:50%;background:#ff4d6d;animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-#heard{color:#e8e9ff;font-size:15px;min-height:20px}
-#cheer{position:fixed;left:50%;top:18%;transform:translate(-50%,0) scale(0);font-size:44px;font-weight:700;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.2);pointer-events:none;transition:transform .25s;white-space:nowrap;z-index:9}
-#cheer.show{transform:translate(-50%,0) scale(1)}
-.p{position:fixed;pointer-events:none;font-size:26px;z-index:8}
-#big{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(30,20,80,.55);z-index:10;color:#fff;text-align:center}
+#heard{color:#e9ffe9;font-size:15px;min-height:20px}
+/* panda buddy */
+#buddy{position:fixed;right:10px;bottom:90px;display:flex;align-items:flex-end;gap:4px;z-index:7;pointer-events:none;flex-direction:row-reverse}
+#buddy img{height:min(26vh,200px);filter:drop-shadow(0 8px 6px rgba(0,0,0,.3));transition:transform .2s}
+#buddy img.jump{animation:jump .6s}
+@keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-40px) rotate(-6deg)}}
+#say{opacity:0;transform:scale(.6);transition:all .2s;margin-bottom:min(18vh,140px)}
+#say.show{opacity:1;transform:scale(1)}
+#say.bubble:after{left:auto;right:-14px;border-right-color:transparent;border-left-color:#22252b}
+.p{position:fixed;pointer-events:none;font-size:28px;z-index:8}
+#big{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(10,40,20,.6);z-index:10;color:#fff;text-align:center}
 #big.on{display:flex}
-#big .e{font-size:120px;animation:pop .6s}
-#big .t{font-size:44px;font-weight:700;margin:10px}
+#big img{height:min(48vh,360px);animation:pop .6s;filter:drop-shadow(0 10px 10px rgba(0,0,0,.4))}
+#big .t{font-size:40px;font-weight:700;margin:10px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+#intro{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(10,40,20,.75);z-index:11;cursor:pointer}
+#intro.on{display:flex}
+#intro img.sc{width:min(80vw,460px);border-radius:28px;border:6px solid #fff;animation:pop .6s;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+#intro .go{font-size:24px}
 /* end */
 .stat{font-size:22px;margin:6px 0}
 .stat b{font-size:34px;color:var(--cur)}
+@media (max-width:700px){#scene{display:none!important}#buddy img{height:120px}#buddy{bottom:96px}}
 </style>
 </head>
 <body>
 
 <!-- START -->
 <section id="s-start" class="screen on">
-  <h1>קוֹרְאִים בְּכֵיף 🚀</h1>
+  <div id="hero"><img src="img/panda/wave.webp" alt=""><div class="bubble" id="hero-say">שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽</div></div>
+  <h1>קוֹרְאִים עִם פַּנְדָּה 🐼</h1>
   <p class="sub" id="cur-title"></p>
   <div class="panel">
     <h3>אֵיךְ קוֹרְאִים לְךָ?</h3>
@@ -111,7 +135,7 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
     <div class="toggle"><span>לְהַרְאוֹת אֶת הַמִּשְׁפָּט</span><input type="checkbox" id="o-ctx"></div>
     <div class="toggle"><span>צְלִילִים</span><input type="checkbox" id="o-snd" checked></div>
   </div>
-  <button class="btn big" id="go">יַאללָה מַתְחִילִים! 🚀</button>
+  <button class="btn big" id="go">יַאללָה לַמִּגְרָשׁ! ⚽</button>
 </section>
 
 <!-- READ -->
@@ -119,8 +143,8 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
   <div id="top">
     <button id="home">🏠</button>
     <div id="stars">⭐ 0</div>
-    <div id="track"><div id="fill"></div><div id="rocket">🚀</div></div>
-    <div id="trophy">🏆</div>
+    <div id="track"><div id="fill"></div><div id="rocket">⚽</div></div>
+    <div id="trophy">🥅</div>
   </div>
   <div id="mic"><span class="dot"></span><span>מַקְשִׁיבָה…</span></div>
   <div id="heard"></div>
@@ -145,13 +169,15 @@ input[type=text]{font-family:inherit;font-size:19px;padding:10px 14px;border-rad
   </div>
 </section>
 
-<div id="cheer"></div>
-<div id="big"><div class="e"></div><div class="t"></div></div>
+<img id="scene" alt="">
+<div id="buddy"><img id="buddy-img" src="img/panda/read.webp" alt=""><div class="bubble" id="say"></div></div>
+<div id="intro"><img class="sc" alt=""><div class="bubble go">בּוֹא נִקְרָא! 👆</div></div>
+<div id="big"><img src="img/panda/cheer.webp" alt=""><div class="t"></div></div>
 
 <script>
 // ---------- TEXT LIBRARY ----------
 const BUILTIN = [
- {id:"taki", title:"מִי הִמְצִיא אֶת הַטָּאקִי?", text:`מִי הִמְצִיא אֶת הַטָּאקִי?
+ {id:"taki", title:"מִי הִמְצִיא אֶת הַטָּאקִי?", cover:"img/taki/1.webp", scenes:["img/taki/1.webp","img/taki/2.webp","img/taki/3.webp","img/taki/4.webp"], text:`מִי הִמְצִיא אֶת הַטָּאקִי?
 טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.
 
 מִי שֶׁהִמְצִיא אֶת הַטָּאקִי הוּא חַיִּים שָׁפִיר. חַיִּים שָׁפִיר לָקַח מִשְׂחָק יָדוּעַ בְּשֵׁם "שְׁמוֹנֶה מְשַׁגֵּעַ" וְהוֹסִיף לוֹ קְלָפִים נוֹסָפִים עִם חֻקִּים חֲדָשִׁים. הַמִּשְׂחָק יָצָא לִפְנֵי יוֹתֵר מֵ־40 שָׁנָה [בִּשְׁנַת 1983] וְהָפַךְ לְהַצְלָחָה בְּיִשְׂרָאֵל וּבַאֲרָצוֹת נוֹסָפוֹת.
@@ -275,8 +301,31 @@ let sel=store.get('part',0);
 
 let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
 
+// ---------- PANDA VOICE ----------
+const VOICE={cheer:["כָּל הַכָּבוֹד!","יוֹפִי שֶׁל קְרִיאָה!","וָואוּ, אֵיזֶה אַלּוּף!","מְצֻיָּן! מַמְשִׁיכִים!","אֵיזֶה גּוֹל יָפֶה!","אַתָּה קוֹרֵא מַמָּשׁ יָפֶה!","יֵשׁ! עוֹד מִלָּה אַחַת!","אַתָּה תּוֹתָח!","כָּכָה בְּדִיּוּק, יָפֶה מְאוֹד!","אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!","אֵיזֶה כֹּחַ!","סוּפֶּר! קָדִימָה!"],
+ milestone:["עוֹד עֶשֶׂר מִלִּים! אַתָּה עַל אֵשׁ!","גּוֹל! אֵיזֶה שַׁחְקָן קְרִיאָה!","אַתָּה גִּבּוֹר קְרִיאָה!","וָואוּ, כְּבָר קָרָאתָ כָּל כָּךְ הַרְבֵּה!"],
+ stuck:["לְאַט לְאַט, אַתָּה יָכוֹל!","נַסֵּה הֲבָרָה אַחַת בְּכָל פַּעַם.","אֲנִי פֹּה אִתְּךָ. בּוֹא נְנַסֶּה יַחַד."],
+ start:["שָׁלוֹם! בּוֹא נִקְרָא יַחַד!"],finish:["סִיַּמְתָּ! אֵיזֶה אַלּוּף! אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!"],faster:["וָואוּ! קָרָאתָ מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!"]};
+const POSE={cheer:['thumbs','cheer','wave'],milestone:['cheer','trophy'],stuck:['read','wave'],start:['wave'],finish:['trophy'],faster:['cheer']};
+let lastCheer=-1,talking=false,cheerGap=0;
+const audioCache={};
+function pandaPose(p){$('buddy-img').src='img/panda/'+p+'.webp'}
+function pandaSay(kind,i){
+  const arr=VOICE[kind];if(i==null){do{i=Math.floor(Math.random()*arr.length)}while(kind==='cheer'&&i===lastCheer&&arr.length>1);if(kind==='cheer')lastCheer=i}
+  const s=$('say');s.textContent=arr[i];s.classList.add('show');clearTimeout(s._t);
+  const poses=POSE[kind];pandaPose(poses[Math.floor(Math.random()*poses.length)]);
+  const im=$('buddy-img');im.classList.remove('jump');void im.offsetWidth;im.classList.add('jump');
+  let dur=1600;
+  if(opts.snd){
+    const src=`audio/${kind}-${i}.mp3`;const a=audioCache[src]||(audioCache[src]=new Audio(src));
+    try{a.currentTime=0;talking=true;a.onended=()=>{talking=false};a.onerror=()=>{talking=false};a.play().catch(()=>{talking=false})}catch(e){talking=false}
+    dur=2200;
+  }
+  s._t=setTimeout(()=>{s.classList.remove('show');pandaPose('read')},dur);
+}
+function preloadVoice(){Object.keys(VOICE).forEach(k=>VOICE[k].forEach((_,i)=>{const src=`audio/${k}-${i}.mp3`;if(!audioCache[src]){const a=new Audio();a.preload='auto';a.src=src;audioCache[src]=a}}))}
 const CHEERS=["כָּל הַכָּבוֹד!","יוֹפִי!","אַלּוּף!","מְצֻיָּן!","וָואוּ!","אֵיזֶה תוֹתָח!","מַדְהִים!","נֶהְדָּר!","יֵשׁ!","סוּפֶּר!"];
-const EMO=["⭐","🌟","✨","💫","🎉","💥","🔥","🦄","🚀","🏆"];
+const EMO=["⚽","⭐","🎋","✨","🐼","🌟","🎉","⚽","💚","🏆"];
 const BIG=[["🎉","{n} מִלִּים!"],["🔥","אַתָּה עַל אֵשׁ!"],["🦸","גִּבּוֹר קְרִיאָה!"],["🚀","טָס קָדִימָה!"],["💪","אֵיזֶה כֹּחַ!"],["🏅","אַלּוּף הַקְּרִיאָה!"]];
 
 // ---------- START UI ----------
@@ -285,7 +334,7 @@ function renderTexts(){
   $('texts').innerHTML='';
   LIB.forEach(t=>{
     const b=document.createElement('button');b.className='btn'+(t.id===curText.id?' sel':'');
-    b.style.textAlign='right';b.textContent=t.title;
+    b.style.textAlign='right';b.innerHTML=(t.cover?`<img src="${t.cover}" style="width:54px;height:54px;object-fit:cover;border-radius:12px;vertical-align:middle;margin-left:10px">`:'📄 ')+t.title;
     b.onclick=()=>{selectText(t.id)};
     if(t.custom){const x=document.createElement('span');x.textContent=' 🗑';x.style.float='left';x.onclick=e=>{e.stopPropagation();if(confirm('למחוק את הטקסט?')){store.set('custom',store.get('custom',[]).filter(c=>c.id!==t.id));loadLib().then(()=>selectText(LIB[0].id))}};b.appendChild(x)}
     $('texts').appendChild(b);
@@ -306,7 +355,8 @@ function renderParts(){
   items.forEach(p=>{
     const b=document.createElement('button');b.className='btn'+(p.i===sel?' sel':'');
     const r=best[bestKey(p.i)];
-    b.innerHTML=p.n+(p.prev?`<div style="font-size:13px;font-weight:400;opacity:.75">${p.prev}</div>`:'')+(r?`<div class="done-tag">✓ קָרָאתִי ${r.times} פְּעָמִים</div>`:'');
+    const sc=curText.scenes&&(p.i===-1?null:curText.scenes[p.i%curText.scenes.length]);
+    b.innerHTML=(sc?`<img class="thumb" src="${sc}">`:'')+p.n+(p.prev?`<div style="font-size:13px;font-weight:400;opacity:.75">${p.prev}</div>`:'')+(r?`<div class="done-tag">✓ קָרָאתִי ${r.times} פְּעָמִים</div>`:'');
     b.onclick=()=>{sel=p.i;store.set('part',sel);renderParts()};
     $('parts').appendChild(b);
   });
@@ -330,6 +380,7 @@ document.querySelectorAll('[data-mode]').forEach(b=>{
 $('name').value=store.get('name','');$('name').oninput=e=>store.set('name',e.target.value.trim());
 loadLib().then(()=>selectText(new URLSearchParams(location.search).get('t')||store.get('text','taki')));
 
+$('hero').onclick=()=>{audioInit();if(opts.snd)new Audio('audio/start-0.mp3').play().catch(()=>{})};
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
 
 $('go').onclick=start;$('again').onclick=start;
@@ -341,7 +392,11 @@ function start(){
   W=tokenize(text);FS=0;wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
   $('word').classList.toggle('colored',opts.col||opts.mode!=='tap');
   $('ctx').style.display=opts.ctx?'block':'none';
-  show('s-read');audioInit();render();
+  show('s-read');audioInit();preloadVoice();render();cheerGap=0;
+  const sc=curText.scenes&&(sel===-1?curText.scenes[0]:curText.scenes[sel%curText.scenes.length]);
+  if(sc){$('scene').src=sc;$('scene').style.display='block';$('intro').querySelector('img').src=sc;$('intro').classList.add('on')}
+  else{$('scene').style.display='none'}
+  pandaPose('wave');setTimeout(()=>pandaSay('start',0),300);
   $('heard').textContent='';if(opts.mode==='mic')startMic();else if(opts.mode==='ai')startAI();else $('mic').style.display='none'
 }
 
@@ -398,11 +453,13 @@ function wordDone(){
   burst(6);ding();
   const n=wi+1;
   const milestone=n%10===0&&n<W.length;
-  if(Math.random()<.35||W[wi].end)cheer(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
+  // panda talks after words: always at sentence end, otherwise every 2-3 words (not over a milestone)
+  cheerGap++;
+  if(!milestone&&!talking&&(W[wi].end||cheerGap>=2+Math.floor(Math.random()*2))){cheerGap=0;pandaSay('cheer')}
   setTimeout(()=>{
     wi++;si=0;ai.burstWord=-1;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
     if(wi>=W.length){finish();return}
-    if(milestone){bigCheer(n)}
+    if(milestone){bigCheer(n);pandaSay('milestone')}
     render();
   },opts.mode==='mic'?350:450);
 }
@@ -423,7 +480,10 @@ let heVoice=null;
 function loadVoices(){const v=speechSynthesis.getVoices();heVoice=v.find(x=>/^he|^iw/i.test(x.lang))||null;$('help').style.display=heVoice?'':'none'}
 if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}else $('help').style.display='none';
 function speak(t){const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';if(heVoice)u.voice=heVoice;u.rate=.7;speechSynthesis.cancel();speechSynthesis.speak(u)}
-setInterval(()=>{if($('s-read').classList.contains('on')&&Date.now()-lastAdvance>9000)$('help').classList.add('nudge')},1000);
+let stuckSaid=-1;
+setInterval(()=>{if(!$('s-read').classList.contains('on'))return;const idle=Date.now()-lastAdvance;
+  if(idle>9000)$('help').classList.add('nudge');
+  if(idle>12000&&stuckSaid!==wi&&!talking){stuckSaid=wi;pandaSay('stuck')}},1000);
 
 // ---------- FX ----------
 function cheer(t){const c=$('cheer');c.textContent=t;c.classList.add('show');clearTimeout(c._t);c._t=setTimeout(()=>c.classList.remove('show'),900)}
@@ -438,12 +498,14 @@ function burst(n){
 }
 function bigCheer(n){
   const [e,t]=BIG[Math.floor(n/10-1)%BIG.length];const name=store.get('name','');
-  $('big').querySelector('.e').textContent=e;
+  $('big').querySelector('img').src='img/panda/'+['cheer','trophy','thumbs'][Math.floor(n/10-1)%3]+'.webp';
   $('big').querySelector('.t').textContent=t.replace('{n}',n)+(name?` ${name}!`:'');
   $('big').classList.add('on');fanfare();burst(24);
-  setTimeout(()=>$('big').classList.remove('on'),1800);
+  setTimeout(()=>$('big').classList.remove('on'),2000);
 }
 $('big').onclick=()=>$('big').classList.remove('on');
+$('intro').onclick=()=>{$('intro').classList.remove('on');lastAdvance=Date.now()};
+$('scene').onclick=()=>{$('intro').classList.add('on')};
 
 // ---------- SOUND ----------
 let AC=null;function audioInit(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}AC&&AC.resume&&AC.resume()}
@@ -505,6 +567,7 @@ async function startAI(){
     const now=Date.now();
     if(!ai.speech)noise=noise*.98+rms*.02;
     const thr=Math.max(.015,noise*2.5);
+    if(talking){ai.lastVoice=0;ai.speech=false;if(now-ai.segStart>300)cut(true);ai.raf=requestAnimationFrame(loop);return}
     if(rms>thr){
       if(now-ai.lastVoice>220&&ai.lastVoice&&W[wi]&&!busy){ // new voice burst = next syllable
         if(ai.burstWord!==wi){ai.burstWord=wi;si=0}else if(si<W[wi].syl.length-1)si++;
@@ -559,7 +622,7 @@ function stopAI(){ai.on=false;cancelAnimationFrame(ai.raf);try{ai.rec&&ai.rec.st
 
 // ---------- FINISH ----------
 function finish(){
-  stopMic();stopAI();
+  stopMic();stopAI();$('scene').style.display='none';
   const secs=Math.round((Date.now()-t0)/1000);
   const best=store.get('best',{});const prev=best[bestKey(sel)];
   const rec={times:(prev?.times||0)+1,secs:prev?Math.min(prev.secs,secs):secs,last:secs};
@@ -569,9 +632,10 @@ function finish(){
   $('end-title').textContent=(name?`${name}, `:'')+'סִיַּמְתָּ! 🏆';
   const mm=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
   let faster='';
+  setTimeout(()=>{if(opts.snd){const k=prev&&secs<prev.last?'faster':'finish';const a=new Audio(`audio/${k}-0.mp3`);a.play().catch(()=>{})}},500);
   if(prev&&secs<prev.last)faster=`<div class="stat">🚀 הַיּוֹם הָיִיתָ מָהִיר יוֹתֵר מִפַּעַם קוֹדֶמֶת!</div>`;
   else if(prev)faster=`<div class="stat">💪 כָּל קְרִיאָה מְחַזֶּקֶת אוֹתְךָ!</div>`;
-  $('end-body').innerHTML=`<div style="font-size:90px">🏆</div>
+  $('end-body').innerHTML=`<img src="img/panda/trophy.webp" style="height:200px;animation:pop .6s">
     <div class="stat">קָרָאתָ <b>${W.length}</b> מִלִּים!</div>
     <div class="stat">⭐ <b>${stars}</b> כּוֹכָבִים</div>
     ${faster}
