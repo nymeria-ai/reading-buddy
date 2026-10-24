@@ -251,10 +251,10 @@ const BUILTIN = [
 הַפָּרָה נוֹלְדָה בִּשְׁנַת 1934. וְלָכֵן הִיא בַּת 90 פְּלוּס.
 
 בִּשְׁטְרָאוּס-עֲלִית מְיַצְּרִים 15 סוּגִים שֶׁל שׁוֹקוֹלָד פָּרָה.
-יֵשׁ שׁוֹקוֹלָד עִם סֻכְּרִיּוֹת קוֹפְצוֹת וְיֵשׁ שׁוֹקוֹלָד מְמֻלָּא בִּקְרֶם חָלָב וַאֲפִלּוּ שׁוֹקוֹלָד מְמֻלָּא בְּתוּת.
+יֵשׁ שׁוֹקוֹלָד עִם סֻכָּרִיּוֹת קוֹפְצוֹת וְיֵשׁ שׁוֹקוֹלָד מְמֻלָּא בִּקְרֶם חָלָב וַאֲפִלּוּ שׁוֹקוֹלָד מְמֻלָּא בְּתוּת.
 
-לִפְנֵי הַרְבֵּה שָׁנִים יִצְּרוּ אֶת הַשּׁוֹקוֹלָד בָּעִיר רָמַת גַּן.
-הַיּוֹם מְיַצְּרִים אֶת הַשּׁוֹקוֹלָד בָּעִיר נוֹף הַגָּלִיל (נָצְרַת עִלִּית).`}
+לִפְנֵי הַרְבֵּה שָׁנִים יָצְרוּ אֶת הַשּׁוֹקוֹלָד בְּעִיר רָמַת גַּן.
+הַיּוֹם מְיַצְּרִים אֶת הַשּׁוֹקוֹלָד בְּעִיר נוֹף הַגָּלִיל (נָצְרַת עִלִּית).`}
 ];
 let LIB=[];
 async function loadLib(){
@@ -400,13 +400,13 @@ const POSE={cheer:['thumbs','cheer','wave'],milestone:['cheer','trophy'],stuck:[
 let lastCheer=-1,talking=false,cheerGap=0;
 const audioCache={};
 function pandaPose(p){$('buddy-img').src='img/panda/'+p+'.webp'}
-function pandaSay(kind,i){
+function pandaSay(kind,i,silent){
   const arr=VOICE[kind];if(i==null){do{i=Math.floor(Math.random()*arr.length)}while(kind==='cheer'&&i===lastCheer&&arr.length>1);if(kind==='cheer')lastCheer=i}
   const s=$('say');s.textContent=vText(kind,i);s.classList.add('show');clearTimeout(s._t);
   const poses=POSE[kind];pandaPose(poses[Math.floor(Math.random()*poses.length)]);
   const im=$('buddy-img');im.classList.remove('jump');void im.offsetWidth;im.classList.add('jump');
   let dur=1600;
-  if(opts.snd){
+  if(opts.snd&&!silent){
     const src=vSrc(kind,i);const a=audioCache[src]||(audioCache[src]=new Audio(src));
     try{a.currentTime=0;talking=true;a.onended=()=>{talking=false};a.onerror=()=>{talking=false};a.play().catch(()=>{talking=false})}catch(e){talking=false}
     dur=2200;
@@ -487,7 +487,7 @@ function start(){
   const sc=curText.scenes&&(sel===-1?curText.scenes[0]:curText.scenes[sel%curText.scenes.length]);
   if(sc){$('scene').src=sc;$('scene').classList.add('on');$('intro').querySelector('img').src=sc;$('intro').classList.add('on')}
   else{$('scene').classList.remove('on')}
-  pandaPose('wave');setTimeout(()=>pandaSay('start',0),300);
+  pandaPose('wave');if(sc)setTimeout(()=>pandaSay('start',0),300); // speaks only while the scene intro covers the screen
   $('heard').textContent='';if(opts.mode==='mic')startMic();else if(opts.mode==='ai')startAI();else $('mic').style.display='none'
 }
 
@@ -546,9 +546,9 @@ function wordDone(){
   burst(6);ding();
   const n=wi+1;
   const milestone=n%10===0&&n<W.length;
-  // panda talks after words: always at sentence end, otherwise every 2-3 words (not over a milestone)
+  // panda only SPEAKS when an overlay takes the screen (start / milestone / finish). Mid-reading cheers + stuck hints are silent bubbles (Guy, Oct 24)
   cheerGap++;
-  if(!milestone&&!talking&&(W[wi].end||cheerGap>=2+Math.floor(Math.random()*2))){cheerGap=0;pandaSay('cheer')}
+  if(!milestone&&!talking&&(W[wi].end||cheerGap>=2+Math.floor(Math.random()*2))){cheerGap=0;pandaSay('cheer',null,true)}
   setTimeout(()=>{
     wi++;si=0;ai.burstWord=-1;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
     if(wi>=W.length){finish();return}
@@ -576,7 +576,7 @@ function speak(t){const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';if(heVo
 let stuckSaid=-1;
 setInterval(()=>{if(!$('s-read').classList.contains('on'))return;const idle=Date.now()-lastAdvance;
   if(idle>9000)$('help').classList.add('nudge');
-  if(idle>12000&&stuckSaid!==wi&&!talking){stuckSaid=wi;pandaSay('stuck')}},1000);
+  if(idle>12000&&stuckSaid!==wi&&!talking){stuckSaid=wi;pandaSay('stuck',null,true)}},1000);
 
 // ---------- FX ----------
 function cheer(t){const c=$('cheer');c.textContent=t;c.classList.add('show');clearTimeout(c._t);c._t=setTimeout(()=>c.classList.remove('show'),900)}
@@ -594,7 +594,7 @@ function bigCheer(n){
   $('big').querySelector('img').src='img/panda/'+['cheer','trophy','thumbs'][Math.floor(n/10-1)%3]+'.webp';
   $('big').querySelector('.t').textContent=t.replace('{n}',n)+(name?` ${name}!`:'');
   $('big').classList.add('on');fanfare();burst(24);
-  setTimeout(()=>$('big').classList.remove('on'),2000);
+  setTimeout(()=>$('big').classList.remove('on'),3300); // covers the spoken milestone line (<=2.9s)
 }
 $('big').onclick=()=>$('big').classList.remove('on');
 $('intro').onclick=()=>{$('intro').classList.remove('on');lastAdvance=Date.now()};
@@ -621,6 +621,7 @@ function startMic(){
       const alts=[...res].map(a=>a.transcript.trim().split(/\s+/));
       $('heard').textContent='🎧 '+res[0].transcript;
       let start=consumed[r]||0, toks=alts[0];
+      if(talking||$('big').classList.contains('on')){consumed[r]=toks.length;continue} // ignore the panda's own voice / overlay time
       for(let j=start;j<toks.length;j++){
         if(!W[wi]||busy)break;
         if(matches(toks[j],W[wi])){consumed[r]=j+1;wordDone();}
