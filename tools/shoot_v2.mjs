@@ -39,7 +39,7 @@ for (const [w, h, mob] of sizes) {
     ok(!home.hScroll && home.go && home.topbar, `${tag} home: no h-scroll, CTA visible & unclipped, top bar in view`);
     await page.screenshot({ path: `${out}/${tag}-1-home.png` });
     // settings sheet
-    await page.click('#gear'); await page.waitForTimeout(350);
+    await page.click('#gear'); await page.waitForTimeout(700);
     const sh = await page.evaluate(() => ({ on: $('sheet').classList.contains('on'), name: $('name').value, gsel: document.querySelector('#gender .sel')?.dataset.g, h: document.querySelector('[data-m*="קוֹרְאִים"]').textContent, texts: document.querySelectorAll('#texts .card').length, inView: (() => { const b = document.querySelector('#sheet .in').getBoundingClientRect(); return b.top >= 0 && b.bottom <= innerHeight + 1 })() }));
     ok(sh.on && sh.gsel === g && sh.texts >= 2 && sh.inView && sh.h.includes(g === 'f' ? 'לָךְ' : 'לְךָ'), `${tag} settings sheet: gender=${sh.gsel} "${sh.h}" texts=${sh.texts}`);
     await page.screenshot({ path: `${out}/${tag}-2-settings.png` });
