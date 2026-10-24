@@ -158,12 +158,16 @@ textarea{font-family:'Alef',sans-serif;height:160px;resize:vertical;line-height:
 
 <!-- START -->
 <section id="s-start" class="screen on">
-  <div id="hero"><img src="img/panda/wave.webp" alt=""><div class="bubble" id="hero-say">שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽</div></div>
+  <div id="hero"><img src="img/panda/wave.webp" alt=""><div class="bubble" id="hero-say" data-m="שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽" data-f="שָׁלוֹם! בּוֹאִי נִקְרָא יַחַד! ⚽">שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽</div></div>
   <h1>קוֹרְאִים עִם פַּנְדָּה 🐼</h1>
   <p class="sub" id="cur-title" style="display:none"></p>
   <div class="panel">
-    <h3>אֵיךְ קוֹרְאִים לְךָ?</h3>
-    <input type="text" id="name" placeholder="הַשֵּׁם שֶׁלְּךָ">
+    <h3 data-m="אֵיךְ קוֹרְאִים לְךָ?" data-f="אֵיךְ קוֹרְאִים לָךְ?">אֵיךְ קוֹרְאִים לְךָ?</h3>
+    <input type="text" id="name" placeholder="הַשֵּׁם שֶׁלְּךָ" data-pm="הַשֵּׁם שֶׁלְּךָ" data-pf="הַשֵּׁם שֶׁלָּךְ">
+    <div class="row" id="gender" style="margin-top:10px">
+      <button class="btn" data-g="m">👦 בֵּן</button>
+      <button class="btn" data-g="f">👧 בַּת</button>
+    </div>
   </div>
   <div class="panel">
     <h3>אֵיזֶה טֶקְסְט?</h3>
@@ -218,7 +222,7 @@ textarea{font-family:'Alef',sans-serif;height:160px;resize:vertical;line-height:
 
 <!-- END -->
 <section id="s-end" class="screen">
-  <h1 id="end-title">סִיַּמְתָּ! 🏆</h1>
+  <h1 id="end-title" data-m="סִיַּמְתָּ! 🏆" data-f="סִיַּמְתְּ! 🏆">סִיַּמְתָּ! 🏆</h1>
   <div class="panel" style="text-align:center" id="end-body"></div>
   <div class="row">
     <button class="btn big" id="again">🔁 עוֹד פַּעַם</button>
@@ -226,20 +230,12 @@ textarea{font-family:'Alef',sans-serif;height:160px;resize:vertical;line-height:
   </div>
 </section>
 
-<div id="intro"><img class="sc" alt=""><div class="bubble go">בּוֹא נִקְרָא! 👆</div></div>
+<div id="intro"><img class="sc" alt=""><div class="bubble go" data-m="בּוֹא נִקְרָא! 👆" data-f="בּוֹאִי נִקְרָא! 👆">בּוֹא נִקְרָא! 👆</div></div>
 <div id="big"><img src="img/panda/cheer.webp" alt=""><div class="t"></div></div>
 
 <script>
 // ---------- TEXT LIBRARY ----------
 const BUILTIN = [
- {id:"para", title:"הַמַּמְתָּק הָאָהוּב בְּיִשְׂרָאֵל", cover:"img/para/1.webp", scenes:["img/para/1.webp","img/para/2.webp","img/para/3.webp","img/para/4.webp"], text:`הַמַּמְתָּק הָאָהוּב בְּיִשְׂרָאֵל
-הַמַּמְתָּק הָאָהוּב בְּיוֹתֵר בְּיִשְׂרָאֵל הוּא: שׁוֹקוֹלָד פָּרָה. חֶבְרַת "שְׁטְרָאוּס-עֵלִית" מְיַצֶּרֶת אֶת הַשׁוֹקוֹלָד פָּרָה.
-
-לַפָּרָה יֵשׁ שֵׁם, קוֹרְאִים לָהּ שְׁמְנוּנִית. הַפָּרָה נוֹלְדָה בִּשְׁנַת 1934. וְלָכֵן הִיא בַּת 90 פְּלוּס. בִּשְׁטְרָאוּס-עֵלִית מְיַצְּרִים 15 סוּגִים שֶׁל שׁוֹקוֹלָד פָּרָה.
-
-יֵשׁ שׁוֹקוֹלָד עִם סֻכָּרִיּוֹת קוֹפְצוֹת וְיֵשׁ שׁוֹקוֹלָד מְמֻלָּא בְּקֶרֶם חָלָב וַאֲפִלּוּ שׁוֹקוֹלָד מְמֻלָּא בְּתוּת.
-
-לִפְנֵי הַרְבֵּה שָׁנִים יָצְרוּ אֶת הַשׁוֹקוֹלָד בָּעִיר רָמַת גַּן. הַיּוֹם מְיַצְּרִים אֶת הַשׁוֹקוֹלָד בָּעִיר נוֹף הַגָּלִיל (נָצְרַת עִלִּית).`},
  {id:"taki", title:"מִי הִמְצִיא אֶת הַטָּאקִי?", cover:"img/taki/1.webp", scenes:["img/taki/1.webp","img/taki/2.webp","img/taki/3.webp","img/taki/4.webp"], text:`מִי הִמְצִיא אֶת הַטָּאקִי?
 טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.
 
@@ -247,7 +243,18 @@ const BUILTIN = [
 
 מָה פֵּרוּשׁ הַמִּלָּה טָאקִי? טָאקִי בְּיַפָּנִית זֶה מַפַּל מַיִם. הַקְּלָף שֶׁעָלָיו מוֹפִיעָה הַמִּלָּה טָאקִי מְאַפְשֵׁר לִשְׁפֹּךְ אֶת כָּל הַקְּלָפִים מֵאוֹתוֹ צֶבַע.
 
-עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`}
+עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`},
+ {id:"para", title:"שׁוֹקוֹלָד פָּרָה", subtitle:"הממתק האהוב בישראל", cover:"img/para/1.webp", scenes:["img/para/1.webp","img/para/2.webp","img/para/3.webp","img/para/4.webp"], fixedParts:true, text:`הַמַּמְתָּק הָאָהוּב בְּיוֹתֵר בְּיִשְׂרָאֵל הוּא: שׁוֹקוֹלָד פָּרָה.
+חֶבְרַת "שְׁטְרָאוּס-עֲלִית" מְיַצֶּרֶת אֶת הַשּׁוֹקוֹלָד פָּרָה.
+
+לְפָרָה יֵשׁ שֵׁם, קוֹרְאִים לָהּ שִׁמְנוֹנִית.
+הַפָּרָה נוֹלְדָה בִּשְׁנַת 1934. וְלָכֵן הִיא בַּת 90 פְּלוּס.
+
+בִּשְׁטְרָאוּס-עֲלִית מְיַצְּרִים 15 סוּגִים שֶׁל שׁוֹקוֹלָד פָּרָה.
+יֵשׁ שׁוֹקוֹלָד עִם סֻכְּרִיּוֹת קוֹפְצוֹת וְיֵשׁ שׁוֹקוֹלָד מְמֻלָּא בִּקְרֶם חָלָב וַאֲפִלּוּ שׁוֹקוֹלָד מְמֻלָּא בְּתוּת.
+
+לִפְנֵי הַרְבֵּה שָׁנִים יִצְּרוּ אֶת הַשּׁוֹקוֹלָד בָּעִיר רָמַת גַּן.
+הַיּוֹם מְיַצְּרִים אֶת הַשּׁוֹקוֹלָד בָּעִיר נוֹף הַגָּלִיל (נָצְרַת עִלִּית).`}
 ];
 let LIB=[];
 async function loadLib(){
@@ -276,7 +283,10 @@ function splitParts(text){
 }
 let curText=null, PARTS=[];
 // spoken forms for numbers
-const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"]};
+const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"],
+ "1934":["1934","אלף תשע מאות שלושים וארבע"],"90":["90","תשעים"],"15":["15","חמש עשרה","חמישה עשר"]};
+// multi-word spoken numbers: the mic gives one word at a time, so the first spoken word also counts ("אלף…", "חמש…")
+function numForms(n){const f=NUM_SAY[n]||[n];const out=new Set(f);f.forEach(x=>{const w=x.split(' ');if(w.length>1){out.add(w.join(''));out.add(w[0])}});return [...out]}
 
 // ---------- HEBREW SYLLABLES ----------
 const MARK=/[\u0591-\u05C7]/, VOW=/[\u05B1-\u05BB\u05C7]/, SHVA='\u05B0', DAG='\u05BC';
@@ -347,7 +357,10 @@ function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;
 function targets(w){
   const plain=w.core.replace(/[\u0591-\u05C7]/g,'').replace(/[־-]/g,'');
   const digits=plain.match(/\d+/);
-  if(digits){const pre=plain.replace(/\d+/,'');return (NUM_SAY[digits[0]]||[digits[0]]).flatMap(n=>[skel(pre+n),skel(n)])}
+  if(digits){const pre=plain.replace(/\d+/,'');return numForms(digits[0]).flatMap(n=>[skel(pre+n),skel(n)])}
+  // hyphenated compound (שְׁטְרָאוּס-עֲלִית) is said as two words: accept the joined form or its first word
+  const parts=w.core.replace(/[\u0591-\u05C7]/g,'').split(/[־-]/).filter(Boolean);
+  if(parts.length>1)return [skel(w.core),skel(parts[0])];
   return [skel(w.core)];
 }
 function matches(heardTok,w){
@@ -365,31 +378,44 @@ let sel=store.get('part',0);
 let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
 
 // ---------- PANDA VOICE ----------
-const VOICE={cheer:["כָּל הַכָּבוֹד!","יוֹפִי שֶׁל קְרִיאָה!","וָואוּ, אֵיזֶה אַלּוּף!","מְצֻיָּן! מַמְשִׁיכִים!","אֵיזֶה גּוֹל יָפֶה!","אַתָּה קוֹרֵא מַמָּשׁ יָפֶה!","יֵשׁ! עוֹד מִלָּה אַחַת!","אַתָּה תּוֹתָח!","כָּכָה בְּדִיּוּק, יָפֶה מְאוֹד!","אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!","אֵיזֶה כֹּחַ!","סוּפֶּר! קָדִימָה!"],
- milestone:["עוֹד עֶשֶׂר מִלִּים! אַתָּה עַל אֵשׁ!","גּוֹל! אֵיזֶה שַׁחְקָן קְרִיאָה!","אַתָּה גִּבּוֹר קְרִיאָה!","וָואוּ, כְּבָר קָרָאתָ כָּל כָּךְ הַרְבֵּה!"],
- stuck:["לְאַט לְאַט, אַתָּה יָכוֹל!","נַסֵּה הֲבָרָה אַחַת בְּכָל פַּעַם.","אֲנִי פֹּה אִתְּךָ. בּוֹא נְנַסֶּה יַחַד."],
- start:["שָׁלוֹם! בּוֹא נִקְרָא יַחַד!"],finish:["סִיַּמְתָּ! אֵיזֶה אַלּוּף! אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!"],faster:["וָואוּ! קָרָאתָ מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!"]};
+// gendered lines = {m,f}; audio: neutral audio/<kind>-<i>.mp3, gendered audio/<kind>-<i>-m|f.mp3 (source: phrases.json)
+const VOICE={cheer:["כָּל הַכָּבוֹד!","יוֹפִי שֶׁל קְרִיאָה!",{m:"וָואוּ, אַתָּה אַלּוּף!",f:"וָואוּ, אַתְּ אַלּוּפָה!"},"מְצֻיָּן! מַמְשִׁיכִים!","אֵיזֶה גּוֹל יָפֶה!",{m:"אַתָּה קוֹרֵא מַמָּשׁ יָפֶה!",f:"אַתְּ קוֹרֵאת מַמָּשׁ יָפֶה!"},"יֵשׁ! עוֹד מִלָּה אַחַת!",{m:"אַתָּה תּוֹתָח!",f:"אַתְּ תּוֹתָחִית!"},"כָּכָה בְּדִיּוּק, יָפֶה מְאוֹד!",{m:"אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!",f:"אֲנִי כָּל כָּךְ גֵּאָה בָּךְ!"},"אֵיזֶה כֹּחַ!","סוּפֶּר! קָדִימָה!"],
+ milestone:[{m:"עוֹד עֶשֶׂר מִלִּים! אַתָּה עַל אֵשׁ!",f:"עוֹד עֶשֶׂר מִלִּים! אַתְּ עַל אֵשׁ!"},{m:"גּוֹל! אֵיזֶה שַׂחְקָן קְרִיאָה!",f:"גּוֹל! אֵיזוֹ שַׂחְקָנִית קְרִיאָה!"},{m:"אַתָּה גִּבּוֹר קְרִיאָה!",f:"אַתְּ גִּבּוֹרַת קְרִיאָה!"},{m:"וָואוּ, כְּבָר קָרָאתָ כָּל כָּךְ הַרְבֵּה!",f:"וָואוּ, כְּבָר קָרָאת כָּל כָּךְ הַרְבֵּה!"}],
+ stuck:[{m:"לְאַט לְאַט, אַתָּה יָכוֹל!",f:"לְאַט לְאַט, אַתְּ יְכוֹלָה!"},{m:"בּוֹא נְנַסֶּה הֲבָרָה אַחַת בְּכָל פַּעַם.",f:"בּוֹאִי נְנַסֶּה הֲבָרָה אַחַת בְּכָל פַּעַם."},{m:"אֲנִי פֹּה אִתְּךָ. בּוֹא נְנַסֶּה יַחַד.",f:"אֲנִי פֹּה אִתָּךְ. בּוֹאִי נְנַסֶּה יַחַד."}],
+ start:[{m:"שָׁלוֹם! בּוֹא נִקְרָא יַחַד!",f:"שָׁלוֹם! בּוֹאִי נִקְרָא יַחַד!"}],
+ finish:[{m:"כָּל הַכָּבוֹד, סִיַּמְתָּ! אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!",f:"כָּל הַכָּבוֹד, סִיַּמְתְּ! אֲנִי כָּל כָּךְ גֵּאָה בָּךְ!"}],
+ faster:[{m:"וָואוּ! קָרָאתָ מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!",f:"וָואוּ! קָרָאת מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!"}]};
+// child's gender (device-local, like the name). default boy.
+const gnd=()=>store.get('gender','m')==='f'?'f':'m';
+const G=(m,f)=>gnd()==='f'?f:m;
+function vText(kind,i){const v=VOICE[kind][i];return typeof v==='string'?v:v[gnd()]}
+function vSrc(kind,i){const v=VOICE[kind][i];return typeof v==='string'?`audio/${kind}-${i}.mp3`:`audio/${kind}-${i}-${gnd()}.mp3`}
+function applyGender(){
+  const g=gnd();
+  document.querySelectorAll('[data-m]').forEach(e=>{e.textContent=e.dataset[g]});
+  document.querySelectorAll('[data-pm]').forEach(e=>{e.placeholder=e.dataset['p'+g]});
+  document.querySelectorAll('#gender [data-g]').forEach(b=>b.classList.toggle('sel',b.dataset.g===g));
+}
 const POSE={cheer:['thumbs','cheer','wave'],milestone:['cheer','trophy'],stuck:['read','wave'],start:['wave'],finish:['trophy'],faster:['cheer']};
 let lastCheer=-1,talking=false,cheerGap=0;
 const audioCache={};
 function pandaPose(p){$('buddy-img').src='img/panda/'+p+'.webp'}
 function pandaSay(kind,i){
   const arr=VOICE[kind];if(i==null){do{i=Math.floor(Math.random()*arr.length)}while(kind==='cheer'&&i===lastCheer&&arr.length>1);if(kind==='cheer')lastCheer=i}
-  const s=$('say');s.textContent=arr[i];s.classList.add('show');clearTimeout(s._t);
+  const s=$('say');s.textContent=vText(kind,i);s.classList.add('show');clearTimeout(s._t);
   const poses=POSE[kind];pandaPose(poses[Math.floor(Math.random()*poses.length)]);
   const im=$('buddy-img');im.classList.remove('jump');void im.offsetWidth;im.classList.add('jump');
   let dur=1600;
   if(opts.snd){
-    const src=`audio/${kind}-${i}.mp3`;const a=audioCache[src]||(audioCache[src]=new Audio(src));
+    const src=vSrc(kind,i);const a=audioCache[src]||(audioCache[src]=new Audio(src));
     try{a.currentTime=0;talking=true;a.onended=()=>{talking=false};a.onerror=()=>{talking=false};a.play().catch(()=>{talking=false})}catch(e){talking=false}
     dur=2200;
   }
   s._t=setTimeout(()=>{s.classList.remove('show');pandaPose('read')},dur);
 }
-function preloadVoice(){Object.keys(VOICE).forEach(k=>VOICE[k].forEach((_,i)=>{const src=`audio/${k}-${i}.mp3`;if(!audioCache[src]){const a=new Audio();a.preload='auto';a.src=src;audioCache[src]=a}}))}
-const CHEERS=["כָּל הַכָּבוֹד!","יוֹפִי!","אַלּוּף!","מְצֻיָּן!","וָואוּ!","אֵיזֶה תוֹתָח!","מַדְהִים!","נֶהְדָּר!","יֵשׁ!","סוּפֶּר!"];
+function preloadVoice(){Object.keys(VOICE).forEach(k=>VOICE[k].forEach((_,i)=>{const src=vSrc(k,i);if(!audioCache[src]){const a=new Audio();a.preload='auto';a.src=src;audioCache[src]=a}}))}
 const EMO=["⚽","⭐","🎋","✨","🐼","🌟","🎉","⚽","💚","🏆"];
-const BIG=[["🎉","{n} מִלִּים!"],["🔥","אַתָּה עַל אֵשׁ!"],["🦸","גִּבּוֹר קְרִיאָה!"],["🚀","טָס קָדִימָה!"],["💪","אֵיזֶה כֹּחַ!"],["🏅","אַלּוּף הַקְּרִיאָה!"]];
+const BIG=[["🎉","{n} מִלִּים!"],["🔥",{m:"אַתָּה עַל אֵשׁ!",f:"אַתְּ עַל אֵשׁ!"}],["🦸",{m:"גִּבּוֹר קְרִיאָה!",f:"גִּבּוֹרַת קְרִיאָה!"}],["🚀",{m:"טָס קָדִימָה!",f:"טָסָה קָדִימָה!"}],["💪","אֵיזֶה כֹּחַ!"],["🏅",{m:"אַלּוּף הַקְּרִיאָה!",f:"אַלּוּפַת הַקְּרִיאָה!"}]];
 
 // ---------- START UI ----------
 function bestKey(i){return curText.id+':'+i}
@@ -405,7 +431,7 @@ function renderTexts(){
 }
 function selectText(id){
   curText=LIB.find(t=>t.id===id)||LIB[0];store.set('text',curText.id);
-  PARTS=splitParts(curText.text).map((t,i)=>({name:'חֵלֶק '+(i+1),text:t}));
+  PARTS=(curText.fixedParts?curText.text.split(/\n\s*\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean):splitParts(curText.text)).map((t,i)=>({name:'חֵלֶק '+(i+1),text:t}));
   if(sel>=PARTS.length)sel=0;
   $('cur-title').textContent=curText.title;
   renderTexts();renderParts();
@@ -443,7 +469,9 @@ document.querySelectorAll('[data-mode]').forEach(b=>{
 $('name').value=store.get('name','');$('name').oninput=e=>store.set('name',e.target.value.trim());
 loadLib().then(()=>selectText(new URLSearchParams(location.search).get('t')||store.get('text','taki')));
 
-$('hero').onclick=()=>{audioInit();if(opts.snd)new Audio('audio/start-0.mp3').play().catch(()=>{})};
+$('hero').onclick=()=>{audioInit();if(opts.snd)new Audio(vSrc('start',0)).play().catch(()=>{})};
+document.querySelectorAll('#gender [data-g]').forEach(b=>b.onclick=()=>{store.set('gender',b.dataset.g);applyGender()});
+applyGender();
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='s-read'){FS=0}}
 
 $('go').onclick=start;$('again').onclick=start;
@@ -562,7 +590,7 @@ function burst(n){
   }
 }
 function bigCheer(n){
-  const [e,t]=BIG[Math.floor(n/10-1)%BIG.length];const name=store.get('name','');
+  const [e,t0_]=BIG[Math.floor(n/10-1)%BIG.length];const t=typeof t0_==='string'?t0_:t0_[gnd()];const name=store.get('name','');
   $('big').querySelector('img').src='img/panda/'+['cheer','trophy','thumbs'][Math.floor(n/10-1)%3]+'.webp';
   $('big').querySelector('.t').textContent=t.replace('{n}',n)+(name?` ${name}!`:'');
   $('big').classList.add('on');fanfare();burst(24);
@@ -700,14 +728,14 @@ function finish(){
   best[bestKey(sel)]=rec;store.set('best',best);
   const name=store.get('name','');
   const hist=store.get('hist',[]);hist.push({d:new Date().toISOString(),text:curText.id,part:sel,words:W.length,secs,help:helpUsed,mode:opts.mode});store.set('hist',hist.slice(-200));
-  $('end-title').textContent=(name?`${name}, `:'')+'סִיַּמְתָּ! 🏆';
+  $('end-title').textContent=(name?`${name}, `:'')+G('סִיַּמְתָּ! 🏆','סִיַּמְתְּ! 🏆');
   const mm=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
   let faster='';
-  setTimeout(()=>{if(opts.snd){const k=prev&&secs<prev.last?'faster':'finish';const a=new Audio(`audio/${k}-0.mp3`);a.play().catch(()=>{})}},500);
-  if(prev&&secs<prev.last)faster=`<div class="stat">🚀 הַיּוֹם הָיִיתָ מָהִיר יוֹתֵר מִפַּעַם קוֹדֶמֶת!</div>`;
-  else if(prev)faster=`<div class="stat">💪 כָּל קְרִיאָה מְחַזֶּקֶת אוֹתְךָ!</div>`;
+  setTimeout(()=>{if(opts.snd){const k=prev&&secs<prev.last?'faster':'finish';const a=new Audio(vSrc(k,0));a.play().catch(()=>{})}},500);
+  if(prev&&secs<prev.last)faster=`<div class="stat">🚀 ${G('הַיּוֹם הָיִיתָ מָהִיר יוֹתֵר מִפַּעַם קוֹדֶמֶת!','הַיּוֹם הָיִית מְהִירָה יוֹתֵר מִפַּעַם קוֹדֶמֶת!')}</div>`;
+  else if(prev)faster=`<div class="stat">💪 ${G('כָּל קְרִיאָה מְחַזֶּקֶת אוֹתְךָ!','כָּל קְרִיאָה מְחַזֶּקֶת אוֹתָךְ!')}</div>`;
   $('end-body').innerHTML=`<img src="img/panda/trophy.webp" style="height:200px;animation:pop .6s">
-    <div class="stat">קָרָאתָ <b>${W.length}</b> מִלִּים!</div>
+    <div class="stat">${G('קָרָאתָ','קָרָאת')} <b>${W.length}</b> מִלִּים!</div>
     <div class="stat">⭐ <b>${stars}</b> כּוֹכָבִים</div>
     ${faster}
     <div style="color:#99a;font-size:14px;margin-top:10px">לַהוֹרִים: זְמַן ${mm(secs)}${prev?` · פַּעַם קוֹדֶמֶת ${mm(prev.last)}`:''} · עֶזְרָה 🔈 ${helpUsed} · פַּעַם מִסְפָּר ${rec.times}</div>`;
