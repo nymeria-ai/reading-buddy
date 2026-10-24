@@ -13,7 +13,7 @@ for (const [name, s] of Object.entries({ phone: { w: 390, h: 844, m: true }, des
   page.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()) });
   await page.goto(url + '?t=para'); await page.waitForTimeout(800);
   // ---- default = boy
-  const g0 = await page.evaluate(() => ({ g: gnd(), hero: $('hero-say').textContent, h3: document.querySelector('[data-m*="קוֹרְאִים"]').textContent, sel: document.querySelector('#gender .sel')?.dataset.g, texts: [...document.querySelectorAll('#texts .btn')].map(b => b.textContent.trim()), parts: PARTS.length, thumbs: [...document.querySelectorAll('#parts img.thumb')].map(i => i.getAttribute('src')) }));
+  const g0 = await page.evaluate(() => ({ g: gnd(), hero: $('hero-say').textContent, h3: document.querySelector('[data-m*="קוֹרְאִים"]').textContent, sel: document.querySelector('#gender .sel')?.dataset.g, texts: [...document.querySelectorAll('#texts .card')].map(b => b.textContent.trim()), parts: PARTS.length, thumbs: [...document.querySelectorAll('#parts img.thumb')].map(i => i.getAttribute('src')) }));
   ok(g0.g === 'm' && g0.sel === 'm' && g0.hero.includes('בּוֹא ') && g0.h3.includes('לְךָ'), `${name} default boy UI: ${g0.hero} / ${g0.h3}`);
   ok(g0.texts.some(t => t.includes('שׁוֹקוֹלָד פָּרָה')), `${name} para in library`);
   ok(g0.parts === 4 && g0.thumbs.length === 4, `${name} para 4 parts, thumbs ${g0.thumbs.join(',')}`);
@@ -47,10 +47,11 @@ for (const [name, s] of Object.entries({ phone: { w: 390, h: 844, m: true }, des
     await page.click('#tohome'); await page.waitForTimeout(300);
   }
   // ---- switch to girl live (no reload)
-  await page.click('#gender [data-g="f"]'); await page.waitForTimeout(200);
+  await page.click('#gear'); await page.waitForTimeout(250); await page.click('#gender [data-g="f"]'); await page.waitForTimeout(200);
   const g1 = await page.evaluate(() => ({ g: gnd(), stored: localStorage.getItem('rb_gender'), hero: $('hero-say').textContent, h3: document.querySelector('[data-m*="קוֹרְאִים"]').textContent, ph: $('name').placeholder, intro: document.querySelector('#intro .bubble').textContent, srcs: Object.keys(VOICE).flatMap(k => VOICE[k].map((v, i) => [typeof v, vSrc(k, i), vText(k, i)])) }));
   ok(g1.g === 'f' && g1.stored === '"f"' && g1.hero.includes('בּוֹאִי') && g1.h3.includes('לָךְ') && g1.ph.includes('שֶׁלָּךְ') && g1.intro.includes('בּוֹאִי'), `${name} girl live swap: ${g1.hero} / ${g1.h3} / ${g1.intro}`);
   ok(g1.srcs.filter(r => r[0] === 'object').every(r => r[1].endsWith('-f.mp3')), `${name} girl: gendered lines -> -f.mp3`);
+  await page.click('#sheet-ok'); await page.waitForTimeout(200);
   await page.screenshot({ path: `${out}/para-${name}-5-start-girl.png` });
   // play a gendered line and check the audio element source actually requested
   await page.evaluate(() => { sel = 0; opts.mode = 'tap' }); await page.click('#go'); await page.waitForTimeout(900); await page.click('#intro'); await page.waitForTimeout(200);
@@ -59,10 +60,10 @@ for (const [name, s] of Object.entries({ phone: { w: 390, h: 844, m: true }, des
   await page.screenshot({ path: `${out}/para-${name}-6-read-girl.png` });
   await page.evaluate(() => { wi = W.length - 1; si = W[wi].syl.length - 1; busy = false; nextStep() }); await page.waitForTimeout(1200);
   const e2 = await page.evaluate(() => ({ title: $('end-title').textContent, body: $('end-body').innerText }));
-  ok(e2.title.includes('סִיַּמְתְּ') && e2.body.includes('קָרָאת '), `${name} girl end: ${e2.title} | ${e2.body.split('\n')[0]}`);
+  ok(e2.title.includes('סִיַּמְתְּ') && /קָרָאת(?!ָ)/.test(e2.body), `${name} girl end: ${e2.title} | ${e2.body.split('\n')[0]}`);
   await page.screenshot({ path: `${out}/para-${name}-7-end-girl.png` });
   // back to boy for Gefen
-  await page.click('#tohome'); await page.click('#gender [data-g="m"]');
+  await page.click('#tohome'); await page.click('#gear'); await page.waitForTimeout(250); await page.click('#gender [data-g="m"]'); await page.click('#sheet-ok');
   ok(await page.evaluate(() => gnd() === 'm' && $('hero-say').textContent.includes('בּוֹא ')), `${name} back to boy live`);
   // all audio files referenced exist
   const all = await page.evaluate(() => { const o = []; ['m', 'f'].forEach(g => { store.set('gender', g); Object.keys(VOICE).forEach(k => VOICE[k].forEach((_, i) => o.push(vSrc(k, i)))) }); store.set('gender', 'm'); return [...new Set(o)] });

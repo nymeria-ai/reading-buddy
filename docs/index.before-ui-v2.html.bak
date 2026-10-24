@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2a9150">
+<title>קוֹרְאִים עִם פַּנְדָּה 🐼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g1:#2f9e55;--g2:#288a4a;--g3:#1f6f3b;
+  --ink:#1d2024;--ink2:#4a525a;--muted:#8a949c;
+  --paper:#fffdf7;--soft:#eef7ef;--line:#d9e7dc;
+  --done:#1f9d55;--cur:#e8700a;--cur-bg:#fff2c2;--gold:#ffcf3d;--gold-dk:#d9a400;
+  --r:22px;--hud:56px;--bar:84px;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:'Varela Round','Alef',system-ui,sans-serif;color:var(--ink)}
+body{overflow:hidden;user-select:none;-webkit-user-select:none;background:var(--g1);
+ background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 72px,rgba(0,0,0,0) 72px 144px),linear-gradient(180deg,#34a85c 0%,#2a9150 60%,#227a44 100%)}
+body:before{content:"";position:fixed;left:0;right:0;top:50%;height:3px;background:rgba(255,255,255,.28);pointer-events:none}
+body:after{content:"";position:fixed;left:50%;top:50%;width:min(44vw,260px);aspect-ratio:1;border:3px solid rgba(255,255,255,.22);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+button{font-family:inherit;color:inherit}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;z-index:1}
+.screen.on{display:flex}
+
+/* ---------- START ---------- */
+#s-start{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(12px + var(--sat)) 16px calc(130px + var(--sab));gap:14px}
+#hero{display:flex;align-items:flex-end;justify-content:center;gap:10px;width:min(560px,100%);margin-top:4px}
+#hero img{height:150px;filter:drop-shadow(0 8px 6px rgba(0,0,0,.3));animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.bubble{background:var(--paper);border:3px solid var(--ink);border-radius:20px;padding:10px 16px;font-size:20px;font-weight:700;position:relative;max-width:240px;line-height:1.5}
+.bubble:after,.bubble:before{content:"";position:absolute;bottom:16px;border:10px solid transparent}
+.bubble:after{left:-19px;border-right-color:var(--ink)}
+.bubble:before{left:-14px;border-right-color:var(--paper);z-index:1}
+h1{color:#fff;margin:0;font-size:30px;text-shadow:0 3px 0 rgba(0,0,0,.25);text-align:center}
+.sub{color:#e9ffe9;margin:0;font-size:18px}
+.panel{background:var(--paper);border-radius:var(--r);padding:16px;width:min(560px,100%);box-shadow:0 6px 0 rgba(0,0,0,.14);border:3px solid var(--ink)}
+.panel h3{margin:0 0 10px;font-size:19px;color:var(--ink)}
+.parts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:3px solid transparent;border-radius:18px;padding:12px;font-size:19px;cursor:pointer;background:var(--soft);color:var(--ink);font-weight:700;transition:transform .08s;position:relative;min-height:56px;line-height:1.3}
+.btn:active{transform:scale(.96)}
+.btn.sel{background:var(--ink);color:#fff;border-color:var(--gold)}
+.btn .thumb{width:100%;height:84px;object-fit:cover;border-radius:12px;display:block;margin-bottom:8px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .btn{flex:1 1 140px}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;font-size:17px;min-height:48px;border-top:1px solid var(--line)}
+.toggle:first-of-type{border-top:0}
+.toggle input{width:28px;height:28px;accent-color:var(--done);flex:none}
+input::placeholder,textarea::placeholder{color:#8a9a90}
+input[type=text],textarea{font-family:inherit;font-size:19px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);width:100%;background:#fff;color:var(--ink)}
+textarea{font-family:'Alef',sans-serif;height:160px;resize:vertical;line-height:1.7}
+.done-tag{font-size:13px;color:var(--done);font-weight:400;margin-top:4px}
+.btn.sel .done-tag{color:var(--gold)}
+#add{width:100%;margin-top:10px;background:transparent;border:3px dashed var(--done);color:var(--g3)}
+#addbox{display:none;margin-top:10px}
+#save-text{width:100%;margin-top:8px;background:var(--done);color:#fff}
+#gowrap{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(12px + var(--sab));background:linear-gradient(180deg,rgba(34,122,68,0),rgba(34,122,68,.95) 40%);display:none;justify-content:center;z-index:3;pointer-events:none}
+#s-start.on ~ #gowrap{display:flex}
+#go{pointer-events:auto;width:min(560px,100%);min-height:72px;font-size:26px;padding:14px 20px;background:var(--gold);color:var(--ink);border:3px solid var(--ink);border-radius:24px;box-shadow:0 6px 0 var(--gold-dk);font-weight:700;cursor:pointer;white-space:nowrap}
+#go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--gold-dk)}
+
+/* ---------- READ ---------- */
+#s-read{padding:0;height:100dvh}
+#top{width:100%;max-width:1000px;height:calc(var(--hud) + var(--sat));padding:var(--sat) 12px 0;display:flex;align-items:center;gap:10px;color:#fff;flex:none}
+#home{background:rgba(0,0,0,.28);color:#fff;border:0;border-radius:14px;font-size:22px;width:48px;height:44px;cursor:pointer;flex:none;display:grid;place-items:center}
+#stars{font-weight:700;font-size:19px;background:rgba(0,0,0,.28);border-radius:14px;padding:0 12px;height:44px;display:flex;align-items:center;gap:4px;flex:none;min-width:74px;justify-content:center}
+#track{flex:1;height:18px;background:rgba(0,0,0,.25);border-radius:12px;position:relative;border:2px solid rgba(255,255,255,.55)}
+#fill{position:absolute;inset:0 0 0 auto;width:0;background:#fff;border-radius:10px;transition:width .4s}
+#rocket{position:absolute;top:50%;font-size:28px;line-height:1;transition:right .4s;right:0;transform:translate(50%,-50%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+#rocket.kick{animation:spin .5s}
+@keyframes spin{to{transform:translate(50%,-50%) rotate(-360deg)}}
+#trophy{font-size:26px;flex:none;line-height:1}
+#microw{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;min-height:0;flex:none;padding:0 12px}
+#mic{display:none;color:#fff;font-size:15px;gap:8px;align-items:center;background:rgba(0,0,0,.22);border-radius:12px;padding:3px 10px}
+#mic .dot{width:12px;height:12px;border-radius:50%;background:#ff4d6d;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#heard{color:#e9ffe9;font-size:14px;line-height:1.3;max-width:70vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#heard:empty{display:none}
+#stage{flex:1;width:100%;min-height:0;display:grid;grid-template-rows:1fr auto;grid-template-columns:1fr;align-items:center;justify-items:center;padding:6px 12px 0;gap:6px}
+#cardwrap{grid-row:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;min-height:0;align-self:stretch;justify-self:stretch}
+#card{background:var(--paper);border-radius:30px;max-width:100%;display:flex;align-items:center;justify-content:center;padding:14px 22px;box-shadow:0 8px 0 rgba(0,0,0,.18),0 0 0 3px var(--ink);cursor:pointer;position:relative}
+#card:active{transform:translateY(2px)}
+#word{font-family:'Alef',sans-serif;font-weight:700;line-height:1.75;letter-spacing:.03em;white-space:nowrap;direction:rtl;display:flex;align-items:baseline;gap:.08em}
+#word.pop{animation:pop .45s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.syl{border-radius:.18em;padding:0 .05em;transition:color .2s,background .2s,box-shadow .2s;color:var(--ink);position:relative}
+.syl.fut{color:var(--ink2)}
+.syl.now{color:var(--cur);background:var(--cur-bg);box-shadow:inset 0 -.09em 0 var(--gold)}
+.syl.past{color:var(--done)}
+.colored .syl.c0{color:var(--ink)}.colored .syl.c1{color:#1f6fd0}
+.colored .syl.now{color:var(--cur)}
+.word-done .syl{color:var(--done)!important;background:none!important;box-shadow:none!important}
+.punct{color:#b0b8bf}
+#ctx{background:rgba(255,255,255,.93);border-radius:16px;padding:8px 14px;font-family:'Alef',sans-serif;font-size:21px;line-height:1.7;max-width:min(100%,900px);text-align:center;color:var(--ink2);display:none}
+#ctx .w{padding:0 2px;border-radius:6px}
+#ctx .w.r{color:var(--muted)}
+#ctx .w.c{background:var(--gold);color:#000;font-weight:700}
+/* mascot lane */
+#buddy{grid-row:2;width:100%;display:flex;align-items:flex-end;justify-content:flex-end;gap:10px;flex-direction:row-reverse;padding:0 6px 6px;height:clamp(100px,18dvh,170px);pointer-events:none;position:relative}
+#buddy img{height:100%;max-height:190px;filter:drop-shadow(0 6px 5px rgba(0,0,0,.3));animation:bob 3s ease-in-out infinite;transform-origin:bottom center}
+#buddy img.jump{animation:jump .6s}
+@keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px) rotate(-5deg)}}
+#say{opacity:0;transform:scale(.7);transform-origin:right bottom;transition:opacity .2s,transform .2s;align-self:flex-end;margin-bottom:clamp(44px,8dvh,78px);font-size:19px;padding:8px 14px;max-width:min(60vw,320px)}
+#say.show{opacity:1;transform:scale(1)}
+#say.bubble:after{left:auto;right:-19px;border-right-color:transparent;border-left-color:var(--ink)}
+#say.bubble:before{left:auto;right:-14px;border-right-color:transparent;border-left-color:var(--paper)}
+#say:empty{visibility:hidden}
+/* bottom bar */
+#controls{flex:none;width:100%;display:grid;grid-template-columns:72px 72px 1fr;gap:10px;padding:8px 12px calc(10px + var(--sab));background:rgba(0,0,0,.18);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-top:2px solid rgba(255,255,255,.18)}
+.cbtn{border:3px solid var(--ink);border-radius:20px;font-size:28px;height:72px;font-weight:700;cursor:pointer;background:var(--paper);box-shadow:0 5px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;gap:10px;line-height:1}
+#next{background:var(--gold);font-size:30px;box-shadow:0 5px 0 var(--gold-dk)}
+#next:active,.cbtn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+#help.nudge{animation:wig 1s infinite}
+@keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+#scene{display:none;grid-row:1/3;grid-column:1;align-self:center;width:min(22vw,230px);border-radius:18px;border:4px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.3);transform:rotate(-3deg);cursor:pointer;justify-self:start;margin-bottom:8px}
+#scene.on{display:none}
+/* tablet / desktop: 3 columns */
+@media (min-width:900px){
+  #stage{grid-template-columns:minmax(170px,20vw) minmax(0,1fr) minmax(170px,20vw);grid-template-rows:1fr;gap:12px 16px;padding:10px 20px 0}
+  #cardwrap{grid-column:2;grid-row:1}
+  #buddy{grid-column:3;grid-row:1;padding:0;height:100%;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px}
+  #buddy img{height:auto;width:min(100%,190px);max-height:min(32dvh,210px)}
+  #say{align-self:center;transform-origin:center bottom;max-width:100%;margin-bottom:0}
+  #say.bubble:after{right:50%;bottom:-20px;margin-right:-10px;border:10px solid transparent;border-top-color:var(--ink)}
+  #say.bubble:before{right:50%;bottom:-15px;margin-right:-10px;border:10px solid transparent;border-top-color:var(--paper)}
+  #scene.on{display:block;grid-column:1;grid-row:1}
+  #controls{grid-template-columns:1fr 84px 84px minmax(240px,420px) 1fr;padding-left:20px;padding-right:20px}
+  #back{grid-column:2}#help{grid-column:3}#next{grid-column:4}
+}
+/* particles / overlays */
+.p{position:fixed;pointer-events:none;font-size:28px;z-index:8}
+#big{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(10,40,20,.72);z-index:10;color:#fff;text-align:center;padding:20px}
+#big.on{display:flex}
+#big img{height:min(42vh,340px);animation:pop .6s;filter:drop-shadow(0 10px 10px rgba(0,0,0,.4))}
+#big .t{font-size:36px;font-weight:700;margin:12px;text-shadow:0 3px 0 rgba(0,0,0,.3);line-height:1.4}
+#intro{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:rgba(10,40,20,.9);z-index:11;cursor:pointer;padding:20px}
+#intro.on{display:flex}
+#intro img.sc{width:min(78vw,420px);max-height:50vh;object-fit:cover;border-radius:28px;border:5px solid #fff;animation:pop .6s;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+#intro .go{font-size:24px;max-width:none}
+#intro .go:after,#intro .go:before{display:none}
+
+/* ---------- END ---------- */
+#s-end{overflow-y:auto;padding:calc(16px + var(--sat)) 16px calc(24px + var(--sab));gap:14px;justify-content:center}
+.stat{font-size:22px;margin:6px 0}
+.stat b{font-size:34px;color:var(--cur)}
+#s-end .row{width:min(560px,100%)}
+#s-end .big{min-height:72px;font-size:24px;background:var(--gold);border:3px solid var(--ink);box-shadow:0 6px 0 var(--gold-dk)}
+#tohome{background:var(--paper)!important;box-shadow:0 6px 0 #c9d1cc!important;flex:0 0 96px!important}
+
+@media (max-height:700px){#buddy{height:clamp(90px,16dvh,140px)}.cbtn{height:64px}:root{--bar:76px}}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<section id="s-start" class="screen on">
+  <div id="hero"><img src="img/panda/wave.webp" alt=""><div class="bubble" id="hero-say" data-m="שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽" data-f="שָׁלוֹם! בּוֹאִי נִקְרָא יַחַד! ⚽">שָׁלוֹם! בּוֹא נִקְרָא יַחַד! ⚽</div></div>
+  <h1>קוֹרְאִים עִם פַּנְדָּה 🐼</h1>
+  <p class="sub" id="cur-title" style="display:none"></p>
+  <div class="panel">
+    <h3 data-m="אֵיךְ קוֹרְאִים לְךָ?" data-f="אֵיךְ קוֹרְאִים לָךְ?">אֵיךְ קוֹרְאִים לְךָ?</h3>
+    <input type="text" id="name" placeholder="הַשֵּׁם שֶׁלְּךָ" data-pm="הַשֵּׁם שֶׁלְּךָ" data-pf="הַשֵּׁם שֶׁלָּךְ">
+    <div class="row" id="gender" style="margin-top:10px">
+      <button class="btn" data-g="m">👦 בֵּן</button>
+      <button class="btn" data-g="f">👧 בַּת</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>אֵיזֶה טֶקְסְט?</h3>
+    <div class="parts" id="texts" style="grid-template-columns:1fr"></div>
+    <button class="btn" id="add">➕ טֶקְסְט חָדָשׁ</button>
+    <div id="addbox">
+      <input type="text" id="new-title" placeholder="כּוֹתֶרֶת (לֹא חוֹבָה)" style="margin-bottom:8px">
+      <textarea id="new-text" placeholder="מַדְבִּיקִים כָּאן אֶת הַטֶּקְסְט (עָדִיף עִם נִקּוּד). שׁוּרָה רֵיקָה = פִּסְקָה חֲדָשָׁה"></textarea>
+      <button class="btn" id="save-text">שְׁמִירָה</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>מָה קוֹרְאִים הַיּוֹם?</h3>
+    <div class="parts" id="parts"></div>
+  </div>
+  <div class="panel">
+    <h3>אֵיךְ מִתְקַדְּמִים?</h3>
+    <div class="row">
+      <button class="btn sel" data-mode="tap">👆 לוֹחֲצִים</button>
+      <button class="btn" data-mode="mic">🎤 מִיקְרוֹפוֹן</button>
+      <button class="btn" data-mode="ai" id="ai-btn">🧠 מִיקְרוֹפוֹן חָכָם</button>
+    </div>
+    <div style="height:8px"></div>
+    <div class="toggle"><span>הֲבָרָה אַחֲרֵי הֲבָרָה (בִּלְחִיצָה)</span><input type="checkbox" id="o-syl" checked></div>
+    <div class="toggle"><span>הֲבָרוֹת בִּצְבָעִים</span><input type="checkbox" id="o-col"></div>
+    <div class="toggle"><span>לְהַרְאוֹת אֶת הַמִּשְׁפָּט</span><input type="checkbox" id="o-ctx"></div>
+    <div class="toggle"><span>צְלִילִים</span><input type="checkbox" id="o-snd" checked></div>
+  </div>
+</section>
+<div id="gowrap"><button id="go">יַאללָה לְהַתְחִיל! ⚽</button></div>
+
+<!-- READ -->
+<section id="s-read" class="screen">
+  <div id="top">
+    <button id="home" aria-label="הַבַּיְתָה">🏠</button>
+    <div id="stars">⭐ 0</div>
+    <div id="track"><div id="fill"></div><div id="rocket">⚽</div></div>
+    <div id="trophy">🥅</div>
+  </div>
+  <div id="microw"><div id="mic"><span class="dot"></span><span>מַקְשִׁיבָה…</span></div><div id="heard"></div></div>
+  <div id="stage">
+    <div id="cardwrap"><div id="card"><div id="word"></div></div><div id="ctx"></div></div>
+    <div id="buddy"><div class="bubble" id="say"></div><img id="buddy-img" src="img/panda/read.webp" alt=""></div>
+    <img id="scene" alt="">
+  </div>
+  <div id="controls">
+    <button class="cbtn" id="back" aria-label="אֲחוֹרָה">→</button>
+    <button class="cbtn" id="help" aria-label="לִשְׁמֹעַ">🔈</button>
+    <button class="cbtn" id="next">הַבָּא ←</button>
+  </div>
+</section>
+
+<!-- END -->
+<section id="s-end" class="screen">
+  <h1 id="end-title" data-m="סִיַּמְתָּ! 🏆" data-f="סִיַּמְתְּ! 🏆">סִיַּמְתָּ! 🏆</h1>
+  <div class="panel" style="text-align:center" id="end-body"></div>
+  <div class="row">
+    <button class="btn big" id="again">🔁 עוֹד פַּעַם</button>
+    <button class="btn big" id="tohome" aria-label="הַבַּיְתָה">🏠</button>
+  </div>
+</section>
+
+<div id="intro"><img class="sc" alt=""><div class="bubble go" data-m="בּוֹא נִקְרָא! 👆" data-f="בּוֹאִי נִקְרָא! 👆">בּוֹא נִקְרָא! 👆</div></div>
+<div id="big"><img src="img/panda/cheer.webp" alt=""><div class="t"></div></div>
+
+<script>
+// ---------- TEXT LIBRARY ----------
+const BUILTIN = [
+ {id:"taki", title:"מִי הִמְצִיא אֶת הַטָּאקִי?", cover:"img/taki/1.webp", scenes:["img/taki/1.webp","img/taki/2.webp","img/taki/3.webp","img/taki/4.webp"], text:`מִי הִמְצִיא אֶת הַטָּאקִי?
+טָאקִי הוּא מִשְׂחָק יִשְׂרְאֵלִי נָפוֹץ. אוּלַי אֲפִלּוּ הַמִּשְׂחָק הַיִּשְׂרְאֵלִי הַנָּפוֹץ וְהַמְּשֻׂחָק בְּיוֹתֵר בְּיִשְׂרָאֵל.
+
+מִי שֶׁהִמְצִיא אֶת הַטָּאקִי הוּא חַיִּים שָׁפִיר. חַיִּים שָׁפִיר לָקַח מִשְׂחָק יָדוּעַ בְּשֵׁם "שְׁמוֹנֶה מְשַׁגֵּעַ" וְהוֹסִיף לוֹ קְלָפִים נוֹסָפִים עִם חֻקִּים חֲדָשִׁים. הַמִּשְׂחָק יָצָא לִפְנֵי יוֹתֵר מֵ־40 שָׁנָה [בִּשְׁנַת 1983] וְהָפַךְ לְהַצְלָחָה בְּיִשְׂרָאֵל וּבַאֲרָצוֹת נוֹסָפוֹת.
+
+מָה פֵּרוּשׁ הַמִּלָּה טָאקִי? טָאקִי בְּיַפָּנִית זֶה מַפַּל מַיִם. הַקְּלָף שֶׁעָלָיו מוֹפִיעָה הַמִּלָּה טָאקִי מְאַפְשֵׁר לִשְׁפֹּךְ אֶת כָּל הַקְּלָפִים מֵאוֹתוֹ צֶבַע.
+
+עִם הַשָּׁנִים הוֹסִיפוּ לַמִּשְׂחָק עוֹד קְלָפִים עִם חֻקִּים נוֹסָפִים. לִכְבוֹד 60 שָׁנָה לַמְּדִינָה, הוֹצִיאוּ אֶת הַמִּשְׂחָק בַּאֲרִיזַת פַּח. בְּכָל שָׁנָה מִתְקַיֶּמֶת אַלִּיפוּת הַטָּאקִי בְּמוּזֵאוֹן "הַלּוּנָדַע" בִּבְאֵר שֶׁבַע. וּמִשְׂחָק הַגְּמָר נֶעֱרָךְ בַּחַג הַחֲנֻכָּה בּוֹ מַכְרִיזִים מִי הוּא אַלּוּף הַטָּאקִי שֶׁל אוֹתָהּ שָׁנָה.`},
+ {id:"para", title:"שׁוֹקוֹלָד פָּרָה", subtitle:"הממתק האהוב בישראל", cover:"img/para/1.webp", scenes:["img/para/1.webp","img/para/2.webp","img/para/3.webp","img/para/4.webp"], fixedParts:true, text:`הַמַּמְתָּק הָאָהוּב בְּיוֹתֵר בְּיִשְׂרָאֵל הוּא: שׁוֹקוֹלָד פָּרָה.
+חֶבְרַת "שְׁטְרָאוּס-עֲלִית" מְיַצֶּרֶת אֶת הַשּׁוֹקוֹלָד פָּרָה.
+
+לְפָרָה יֵשׁ שֵׁם, קוֹרְאִים לָהּ שִׁמְנוֹנִית.
+הַפָּרָה נוֹלְדָה בִּשְׁנַת 1934. וְלָכֵן הִיא בַּת 90 פְּלוּס.
+
+בִּשְׁטְרָאוּס-עֲלִית מְיַצְּרִים 15 סוּגִים שֶׁל שׁוֹקוֹלָד פָּרָה.
+יֵשׁ שׁוֹקוֹלָד עִם סֻכָּרִיּוֹת קוֹפְצוֹת וְיֵשׁ שׁוֹקוֹלָד מְמֻלָּא בִּקְרֶם חָלָב וַאֲפִלּוּ שׁוֹקוֹלָד מְמֻלָּא בְּתוּת.
+
+לִפְנֵי הַרְבֵּה שָׁנִים יָצְרוּ אֶת הַשּׁוֹקוֹלָד בְּעִיר רָמַת גַּן.
+הַיּוֹם מְיַצְּרִים אֶת הַשּׁוֹקוֹלָד בְּעִיר נוֹף הַגָּלִיל (נָצְרַת עִלִּית).`}
+];
+let LIB=[];
+async function loadLib(){
+  let remote=[];
+  try{const r=await fetch('texts.json?'+Date.now());if(r.ok)remote=await r.json()}catch(e){}
+  const ids=new Set(remote.map(t=>t.id));
+  LIB=[...remote,...BUILTIN.filter(t=>!ids.has(t.id)),...store.get('custom',[])];
+}
+// split a text into parts: by paragraphs, merged/split to ~20-45 words
+function splitParts(text){
+  const paras=text.split(/\n\s*\n/).map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean);
+  const out=[];let cur='';
+  const wc=s=>s.split(' ').filter(Boolean).length;
+  for(const p of paras){
+    if(wc(p)>45){ // split long paragraph by sentences
+      const sents=p.match(/[^.?!]+[.?!"]*\s*/g)||[p];
+      for(const s of sents){ if(cur&&wc(cur)+wc(s)>40){out.push(cur.trim());cur=''} cur+=s+' ' }
+      continue;
+    }
+    if(cur&&wc(cur)+wc(p)>40){out.push(cur.trim());cur=''}
+    cur+=p+' ';
+    if(wc(cur)>=20){out.push(cur.trim());cur=''}
+  }
+  if(cur.trim()){ if(out.length&&wc(cur)<8)out[out.length-1]+=' '+cur.trim(); else out.push(cur.trim()) }
+  return out;
+}
+let curText=null, PARTS=[];
+// spoken forms for numbers
+const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"],
+ "1934":["1934","אלף תשע מאות שלושים וארבע"],"90":["90","תשעים"],"15":["15","חמש עשרה","חמישה עשר"]};
+// multi-word spoken numbers: the mic gives one word at a time, so the first spoken word also counts ("אלף…", "חמש…")
+function numForms(n){const f=NUM_SAY[n]||[n];const out=new Set(f);f.forEach(x=>{const w=x.split(' ');if(w.length>1){out.add(w.join(''));out.add(w[0])}});return [...out]}
+
+// ---------- HEBREW SYLLABLES ----------
+const MARK=/[\u0591-\u05C7]/, VOW=/[\u05B1-\u05BB\u05C7]/, SHVA='\u05B0', DAG='\u05BC';
+function clusters(s){const o=[];for(const ch of s){if(MARK.test(ch)&&o.length)o[o.length-1]+=ch;else o.push(ch)}return o}
+const isHeb=c=>/[\u05D0-\u05EA]/.test(c[0]);
+function isMater(c){ // וּ or וֹ used as a vowel
+  if(c[0]!=='ו')return false;
+  const other=/[\u05B1-\u05B8\u05BB\u05C7]/.test(c);
+  return !other && (c.includes(DAG)||c.includes('\u05B9')||c.includes('\u05BA'));
+}
+function syllabify(core){
+  const cs=clusters(core), out=[];
+  // split leading non-hebrew / digits pieces
+  for(let i=0;i<cs.length;i++){
+    const c=cs[i], last=out[out.length-1];
+    if(!isHeb(c)){ // digits / maqaf
+      if(c==='־'||c==='-'){ if(last) last.t+=c; continue }
+      if(last&&last.num){last.t+=c;continue}
+      out.push({t:c,v:true,num:true,sh:false});continue;
+    }
+    const vowel=VOW.test(c)&&!isMater(c), sh=c.includes(SHVA), mater=isMater(c);
+    const nextC=cs[i+1];
+    if(mater){
+      if(last&&!last.v&&!last.num){last.t+=c;last.v=true;last.sh=false}
+      else out.push({t:c,v:true,sh:false});
+      continue;
+    }
+    if(vowel){
+      // patach genuva at word end: יָדוּעַ
+      const isEnd=i===cs.length-1;
+      if(isEnd&&/[חעה]/.test(c[0])&&c.includes('\u05B7')&&last&&last.v&&!last.num){last.t+=c;continue}
+      out.push({t:c,v:true,sh:false});continue;
+    }
+    if(sh){
+      const isEnd=i===cs.length-1;
+      const na=!last||last.num||last.sh||(c.includes(DAG)&&!isEnd);
+      if(na) out.push({t:c,v:true,sh:true});
+      else {last.t+=c;last.sh=true}
+      continue;
+    }
+    // bare consonant
+    if(nextC&&isMater(nextC)){out.push({t:c,v:false,sh:false});continue}
+    if(last&&!last.num){last.t+=c;continue}
+    out.push({t:c,v:false,sh:false});
+  }
+  // merge a leading vowel-less fragment into next
+  if(out.length>1&&!out[0].v&&!out[0].num){out[1].t=out[0].t+out[1].t;out.shift()}
+  return out.map(o=>o.t);
+}
+function tokenize(text){
+  const words=[];
+  text.split(/\s+/).filter(Boolean).forEach(raw=>{
+    const m=raw.match(/^([^\u05D0-\u05EA0-9]*)(.*?)([^\u05D0-\u05EA\u05B0-\u05C70-9]*)$/);
+    const pre=m[1], core=m[2], post=m[3];
+    words.push({pre,core,post,syl:syllabify(core),end:/[.?!:]/.test(post)});
+  });
+  return words;
+}
+
+// ---------- MATCHING ----------
+const FIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+function skel(s){
+  s=s.replace(/[\u0591-\u05C7]/g,'').replace(/[^\u05D0-\u05EA0-9]/g,'');
+  s=s.replace(/[ךםןףץ]/g,c=>FIN[c]);
+  return s[0]?s[0]+s.slice(1).replace(/[וי]/g,''):'';
+}
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+function targets(w){
+  const plain=w.core.replace(/[\u0591-\u05C7]/g,'').replace(/[־-]/g,'');
+  const digits=plain.match(/\d+/);
+  if(digits){const pre=plain.replace(/\d+/,'');return numForms(digits[0]).flatMap(n=>[skel(pre+n),skel(n)])}
+  // hyphenated compound (שְׁטְרָאוּס-עֲלִית) is said as two words: accept the joined form or its first word
+  const parts=w.core.replace(/[\u0591-\u05C7]/g,'').split(/[־-]/).filter(Boolean);
+  if(parts.length>1)return [skel(w.core),skel(parts[0])];
+  return [skel(w.core)];
+}
+function matches(heardTok,w){
+  const h=skel(heardTok); if(!h)return false;
+  return targets(w).some(t=>{ if(!t)return false; if(t.length<=2)return h===t; if(t.length<=3)return lev(h,t)<=(h.length>=3?1:0)&&h[0]===t[0]; return lev(h,t)<=1||(h.length>=5&&lev(h,t)<=2)});
+}
+
+// ---------- STATE ----------
+const $=id=>document.getElementById(id);
+const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem('rb_'+k))??d}catch(e){return d}},set:(k,v)=>localStorage.setItem('rb_'+k,JSON.stringify(v))};
+let opts={mode:store.get('mode','tap'),syl:store.get('syl',true),col:store.get('col',false),ctx:store.get('ctx',false),snd:store.get('snd',true)};
+let sel=store.get('part',0);
+(function(){const k=new URLSearchParams(location.search).get('k');if(k){store.set('code',k);history.replaceState(null,'',location.pathname)}})();
+
+let W=[],wi=0,si=0,stars=0,t0=0,lastAdvance=0,helpUsed=0;
+
+// ---------- PANDA VOICE ----------
+// gendered lines = {m,f}; audio: neutral audio/<kind>-<i>.mp3, gendered audio/<kind>-<i>-m|f.mp3 (source: phrases.json)
+const VOICE={cheer:["כָּל הַכָּבוֹד!","יוֹפִי שֶׁל קְרִיאָה!",{m:"וָואוּ, אַתָּה אַלּוּף!",f:"וָואוּ, אַתְּ אַלּוּפָה!"},"מְצֻיָּן! מַמְשִׁיכִים!","אֵיזֶה גּוֹל יָפֶה!",{m:"אַתָּה קוֹרֵא מַמָּשׁ יָפֶה!",f:"אַתְּ קוֹרֵאת מַמָּשׁ יָפֶה!"},"יֵשׁ! עוֹד מִלָּה אַחַת!",{m:"אַתָּה תּוֹתָח!",f:"אַתְּ תּוֹתָחִית!"},"כָּכָה בְּדִיּוּק, יָפֶה מְאוֹד!",{m:"אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!",f:"אֲנִי כָּל כָּךְ גֵּאָה בָּךְ!"},"אֵיזֶה כֹּחַ!","סוּפֶּר! קָדִימָה!"],
+ milestone:[{m:"עוֹד עֶשֶׂר מִלִּים! אַתָּה עַל אֵשׁ!",f:"עוֹד עֶשֶׂר מִלִּים! אַתְּ עַל אֵשׁ!"},{m:"גּוֹל! אֵיזֶה שַׂחְקָן קְרִיאָה!",f:"גּוֹל! אֵיזוֹ שַׂחְקָנִית קְרִיאָה!"},{m:"אַתָּה גִּבּוֹר קְרִיאָה!",f:"אַתְּ גִּבּוֹרַת קְרִיאָה!"},{m:"וָואוּ, כְּבָר קָרָאתָ כָּל כָּךְ הַרְבֵּה!",f:"וָואוּ, כְּבָר קָרָאת כָּל כָּךְ הַרְבֵּה!"}],
+ stuck:[{m:"לְאַט לְאַט, אַתָּה יָכוֹל!",f:"לְאַט לְאַט, אַתְּ יְכוֹלָה!"},{m:"בּוֹא נְנַסֶּה הֲבָרָה אַחַת בְּכָל פַּעַם.",f:"בּוֹאִי נְנַסֶּה הֲבָרָה אַחַת בְּכָל פַּעַם."},{m:"אֲנִי פֹּה אִתְּךָ. בּוֹא נְנַסֶּה יַחַד.",f:"אֲנִי פֹּה אִתָּךְ. בּוֹאִי נְנַסֶּה יַחַד."}],
+ start:[{m:"שָׁלוֹם! בּוֹא נִקְרָא יַחַד!",f:"שָׁלוֹם! בּוֹאִי נִקְרָא יַחַד!"}],
+ finish:[{m:"כָּל הַכָּבוֹד, סִיַּמְתָּ! אֲנִי כָּל כָּךְ גֵּאָה בְּךָ!",f:"כָּל הַכָּבוֹד, סִיַּמְתְּ! אֲנִי כָּל כָּךְ גֵּאָה בָּךְ!"}],
+ faster:[{m:"וָואוּ! קָרָאתָ מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!",f:"וָואוּ! קָרָאת מַהֵר יוֹתֵר מִפַּעַם קוֹדֶמֶת!"}]};
+// child's gender (device-local, like the name). default boy.
+const gnd=()=>store.get('gender','m')==='f'?'f':'m';
+const G=(m,f)=>gnd()==='f'?f:m;
+function vText(kind,i){const v=VOICE[kind][i];return typeof v==='string'?v:v[gnd()]}
+function vSrc(kind,i){const v=VOICE[kind][i];return typeof v==='string'?`audio/${kind}-${i}.mp3`:`audio/${kind}-${i}-${gnd()}.mp3`}
+function applyGender(){
+  const g=gnd();
+  document.querySelectorAll('[data-m]').forEach(e=>{e.textContent=e.dataset[g]});
+  document.querySelectorAll('[data-pm]').forEach(e=>{e.placeholder=e.dataset['p'+g]});
+  document.querySelectorAll('#gender [data-g]').forEach(b=>b.classList.toggle('sel',b.dataset.g===g));
+}
+const POSE={cheer:['thumbs','cheer','wave'],milestone:['cheer','trophy'],stuck:['read','wave'],start:['wave'],finish:['trophy'],faster:['cheer']};
+let lastCheer=-1,talking=false,cheerGap=0;
+const audioCache={};
+function pandaPose(p){$('buddy-img').src='img/panda/'+p+'.webp'}
+function pandaSay(kind,i,silent){
+  const arr=VOICE[kind];if(i==null){do{i=Math.floor(Math.random()*arr.length)}while(kind==='cheer'&&i===lastCheer&&arr.length>1);if(kind==='cheer')lastCheer=i}
+  const s=$('say');s.textContent=vText(kind,i);s.classList.add('show');clearTimeout(s._t);
+  const poses=POSE[kind];pandaPose(poses[Math.floor(Math.random()*poses.length)]);
+  const im=$('buddy-img');im.classList.remove('jump');void im.offsetWidth;im.classList.add('jump');
+  let dur=1600;
+  if(opts.snd&&!silent){
+    const src=vSrc(kind,i);const a=audioCache[src]||(audioCache[src]=new Audio(src));
+    try{a.currentTime=0;talking=true;a.onended=()=>{talking=false};a.onerror=()=>{talking=false};a.play().catch(()=>{talking=false})}catch(e){talking=false}
+    dur=2200;
+  }
+  s._t=setTimeout(()=>{s.classList.remove('show');pandaPose('read')},dur);
+}
+function preloadVoice(){Object.keys(VOICE).forEach(k=>VOICE[k].forEach((_,i)=>{const src=vSrc(k,i);if(!audioCache[src]){const a=new Audio();a.preload='auto';a.src=src;audioCache[src]=a}}))}
+const EMO=["⚽","⭐","🎋","✨","🐼","🌟","🎉","⚽","💚","🏆"];
+const BIG=[["🎉","{n} מִלִּים!"],["🔥",{m:"אַתָּה עַל אֵשׁ!",f:"אַתְּ עַל אֵשׁ!"}],["🦸",{m:"גִּבּוֹר קְרִיאָה!",f:"גִּבּוֹרַת קְרִיאָה!"}],["🚀",{m:"טָס קָדִימָה!",f:"טָסָה קָדִימָה!"}],["💪","אֵיזֶה כֹּחַ!"],["🏅",{m:"אַלּוּף הַקְּרִיאָה!",f:"אַלּוּפַת הַקְּרִיאָה!"}]];
+
+// ---------- START UI ----------
+function bestKey(i){return curText.id+':'+i}
+function renderTexts(){
+  $('texts').innerHTML='';
+  LIB.forEach(t=>{
+    const b=document.createElement('button');b.className='btn'+(t.id===curText.id?' sel':'');
+    b.style.textAlign='right';b.innerHTML=(t.cover?`<img src="${t.cover}" style="width:54px;height:54px;object-fit:cover;border-radius:12px;vertical-align:middle;margin-left:10px">`:'📄 ')+t.title;
+    b.onclick=()=>{selectText(t.id)};
+    if(t.custom){const x=document.createElement('span');x.textContent=' 🗑';x.style.float='left';x.onclick=e=>{e.stopPropagation();if(confirm('למחוק את הטקסט?')){store.set('custom',store.get('custom',[]).filter(c=>c.id!==t.id));loadLib().then(()=>selectText(LIB[0].id))}};b.appendChild(x)}
+    $('texts').appendChild(b);
+  });
+}
+function selectText(id){
+  curText=LIB.find(t=>t.id===id)||LIB[0];store.set('text',curText.id);
+  PARTS=(curText.fixedParts?curText.text.split(/\n\s*\n/).map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean):splitParts(curText.text)).map((t,i)=>({name:'חֵלֶק '+(i+1),text:t}));
+  if(sel>=PARTS.length)sel=0;
+  $('cur-title').textContent=curText.title;
+  renderTexts();renderParts();
+}
+function renderParts(){
+  const best=store.get('best',{});
+  $('parts').innerHTML='';
+  const items=PARTS.map((p,i)=>({n:p.name,i,prev:p.text.split(' ').slice(0,3).join(' ')+'…'}));
+  if(PARTS.length>1)items.push({n:"כָּל הַטֶּקְסְט 📖",i:-1,prev:''});
+  items.forEach(p=>{
+    const b=document.createElement('button');b.className='btn'+(p.i===sel?' sel':'');
+    const r=best[bestKey(p.i)];
+    const sc=curText.scenes&&(p.i===-1?null:curText.scenes[p.i%curText.scenes.length]);
+    b.innerHTML=(sc?`<img class="thumb" src="${sc}">`:'')+p.n+(p.prev?`<div style="font-size:13px;font-weight:400;opacity:.75">${p.prev}</div>`:'')+(r?`<div class="done-tag">✓ קָרָאתִי ${r.times} פְּעָמִים</div>`:'');
+    b.onclick=()=>{sel=p.i;store.set('part',sel);renderParts()};
+    $('parts').appendChild(b);
+  });
+}
+$('add').onclick=()=>{$('addbox').style.display=$('addbox').style.display==='none'?'block':'none'};
+$('save-text').onclick=async()=>{
+  const text=$('new-text').value.trim();if(!text)return;
+  const title=$('new-title').value.trim()||text.split(/\s+/).slice(0,4).join(' ')+'…';
+  const t={id:'c'+Date.now(),title,text,custom:true};
+  store.set('custom',[...store.get('custom',[]),t]);
+  $('new-text').value='';$('new-title').value='';$('addbox').style.display='none';
+  await loadLib();sel=0;selectText(t.id);
+};
+if(!store.get('code',''))$('ai-btn').style.display='none';
+if(opts.mode==='ai'&&!store.get('code',''))opts.mode='tap';
+document.querySelectorAll('[data-mode]').forEach(b=>{
+  b.classList.toggle('sel',b.dataset.mode===opts.mode);
+  b.onclick=()=>{opts.mode=b.dataset.mode;store.set('mode',opts.mode);document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('sel',x===b))};
+});
+[['o-syl','syl'],['o-col','col'],['o-ctx','ctx'],['o-snd','snd']].forEach(([id,k])=>{$(id).checked=opts[k];$(id).onchange=e=>{opts[k]=e.target.checked;store.set(k,opts[k])}});
+$('name').value=store.get('name','');$('name').oninput=e=>store.set('name',e.target.value.trim());
+loadLib().then(()=>selectText(new URLSearchParams(location.search).get('t')||store.get('text','taki')));
+
+$('hero').onclick=()=>{audioInit();if(opts.snd)new Audio(vSrc('start',0)).play().catch(()=>{})};
+document.querySelectorAll('#gender [data-g]').forEach(b=>b.onclick=()=>{store.set('gender',b.dataset.g);applyGender()});
+applyGender();
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));if(id==='s-read'){FS=0}}
+
+$('go').onclick=start;$('again').onclick=start;
+$('tohome').onclick=()=>{renderParts();show('s-start')};
+$('home').onclick=()=>{stopMic();stopAI();renderParts();show('s-start')};
+
+function start(){
+  const text=sel===-1?PARTS.map(p=>p.text).join(' '):PARTS[sel].text;
+  W=tokenize(text);FS=0;wi=0;si=0;stars=0;helpUsed=0;t0=Date.now();lastAdvance=Date.now();
+  $('word').classList.toggle('colored',opts.col||opts.mode!=='tap');
+  $('ctx').style.display=opts.ctx?'block':'none';
+  show('s-read');audioInit();preloadVoice();render();cheerGap=0;
+  const sc=curText.scenes&&(sel===-1?curText.scenes[0]:curText.scenes[sel%curText.scenes.length]);
+  if(sc){$('scene').src=sc;$('scene').classList.add('on');$('intro').querySelector('img').src=sc;$('intro').classList.add('on')}
+  else{$('scene').classList.remove('on')}
+  pandaPose('wave');if(sc)setTimeout(()=>pandaSay('start',0),300); // speaks only while the scene intro covers the screen
+  $('heard').textContent='';if(opts.mode==='mic')startMic();else if(opts.mode==='ai')startAI();else $('mic').style.display='none'
+}
+
+// ---------- RENDER ----------
+let FS=0;
+function computeFS(){
+  // one size for the whole part, sized by its longest word, so words never jump in size.
+  // fit both the card width and the card lane height (no scrolling on the reading screen)
+  const wrap=$('cardwrap');const cw=wrap.clientWidth||window.innerWidth,chh=wrap.clientHeight||window.innerHeight*.4;
+  const base=Math.min(window.innerWidth*.24,150,Math.max(40,(chh-40)/1.75));
+  const avail=cw-56; // card padding + border
+  const m=document.createElement('div');m.id='measure';m.style.cssText=`position:absolute;visibility:hidden;white-space:nowrap;font-family:Alef;font-weight:700;letter-spacing:.03em;font-size:${base}px`;
+  document.body.appendChild(m);let maxW=0;
+  for(const w of W){m.textContent=w.pre+w.syl.join('')+w.post;maxW=Math.max(maxW,m.scrollWidth+(w.syl.length+1)*base*.12)}
+  m.remove();FS=Math.max(36,Math.min(base,Math.floor(base*avail/Math.max(maxW,1))));
+}
+window.addEventListener('resize',()=>{if(W.length){FS=0;render()}});
+function render(done){
+  const w=W[wi];if(!w)return;
+  const stepSyl=(opts.mode==='tap'&&opts.syl)||opts.mode==='ai';
+  let h=w.pre?`<span class="punct">${w.pre}</span>`:'';
+  w.syl.forEach((s,k)=>{
+    let cls='syl c'+(k%2);
+    if(stepSyl)cls+=k<si?' past':k===si?' now':' fut';
+    h+=`<span class="${cls}">${s}</span>`;
+  });
+  if(w.post)h+=`<span class="punct">${w.post}</span>`;
+  const el=$('word');el.innerHTML=h;el.classList.toggle('word-done',!!done);
+  // auto-fit
+  if(!FS)computeFS();el.style.fontSize=FS+'px';
+  // progress
+  const pct=wi/W.length*100;$('fill').style.width=pct+'%';$('rocket').style.right=pct+'%';
+  $('stars').textContent='⭐ '+stars;
+  if(opts.ctx)renderCtx();
+}
+function renderCtx(){
+  let s=wi;while(s>0&&!W[s-1].end)s--;let e=wi;while(e<W.length-1&&!W[e].end)e++;
+  let h='';for(let i=s;i<=e;i++)h+=`<span class="w ${i<wi?'r':i===wi?'c':''}">${W[i].pre}${W[i].core}${W[i].post}</span> `;
+  $('ctx').innerHTML=h;
+}
+
+// ---------- ADVANCE ----------
+function nextStep(){
+  const w=W[wi];if(!w)return;
+  if(opts.mode==='tap'&&opts.syl&&si<w.syl.length-1){si++;render();tick(si);return}
+  wordDone();
+}
+function prevStep(){
+  if(opts.mode==='tap'&&opts.syl&&si>0){si--;render();return}
+  if(wi>0){wi--;si=0;stars=Math.max(0,stars-1);render()}
+}
+let busy=false;
+function wordDone(){
+  if(busy)return;busy=true;
+  stars++;render(true);$('word').classList.remove('pop');void $('word').offsetWidth;$('word').classList.add('pop');
+  burst(6);ding();
+  const n=wi+1;
+  const milestone=n%10===0&&n<W.length;
+  // panda only SPEAKS when an overlay takes the screen (start / milestone / finish). Mid-reading cheers + stuck hints are silent bubbles (Guy, Oct 24)
+  cheerGap++;
+  if(!milestone&&!talking&&(W[wi].end||cheerGap>=2+Math.floor(Math.random()*2))){cheerGap=0;pandaSay('cheer',null,true)}
+  setTimeout(()=>{
+    wi++;si=0;ai.burstWord=-1;lastAdvance=Date.now();$('help').classList.remove('nudge');busy=false;
+    if(wi>=W.length){finish();return}
+    if(milestone){bigCheer(n);pandaSay('milestone')}
+    render();
+  },opts.mode==='mic'?350:450);
+}
+$('next').onclick=e=>{e.stopPropagation();nextStep()};
+$('card').onclick=()=>nextStep();
+$('back').onclick=()=>prevStep();
+document.addEventListener('keydown',e=>{if(!$('s-read').classList.contains('on'))return;if(e.key===' '||e.key==='Enter'||e.key==='ArrowLeft'){e.preventDefault();nextStep()}if(e.key==='Backspace'||e.key==='ArrowRight')prevStep()});
+
+// help: say word (or current syllable)
+$('help').onclick=()=>{
+  const w=W[wi];if(!w||!window.speechSynthesis)return;helpUsed++;
+  const stepSyl=opts.mode==='tap'&&opts.syl;
+  let t=stepSyl&&w.syl.length>1?w.syl[si]:w.core;
+  const plainDigits=t.replace(/[\u0591-\u05C7]/g,'');
+  speak(t);
+};
+let heVoice=null;
+function loadVoices(){const v=speechSynthesis.getVoices();heVoice=v.find(x=>/^he|^iw/i.test(x.lang))||null;$('help').style.display=heVoice?'':'none'}
+if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}else $('help').style.display='none';
+function speak(t){const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';if(heVoice)u.voice=heVoice;u.rate=.7;speechSynthesis.cancel();speechSynthesis.speak(u)}
+let stuckSaid=-1;
+setInterval(()=>{if(!$('s-read').classList.contains('on'))return;const idle=Date.now()-lastAdvance;
+  if(idle>9000)$('help').classList.add('nudge');
+  if(idle>12000&&stuckSaid!==wi&&!talking){stuckSaid=wi;pandaSay('stuck',null,true)}},1000);
+
+// ---------- FX ----------
+function cheer(t){const c=$('cheer');c.textContent=t;c.classList.add('show');clearTimeout(c._t);c._t=setTimeout(()=>c.classList.remove('show'),900)}
+function burst(n){
+  const r=$('card').getBoundingClientRect();
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');p.className='p';p.textContent=EMO[Math.floor(Math.random()*EMO.length)];
+    const x=r.left+r.width/2,y=r.top+r.height/2;p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);
+    const a=Math.random()*Math.PI*2,d=120+Math.random()*180;
+    p.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d}px)) scale(1.3)`,opacity:0}],{duration:800+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>p.remove();
+  }
+}
+function bigCheer(n){
+  const [e,t0_]=BIG[Math.floor(n/10-1)%BIG.length];const t=typeof t0_==='string'?t0_:t0_[gnd()];const name=store.get('name','');
+  $('big').querySelector('img').src='img/panda/'+['cheer','trophy','thumbs'][Math.floor(n/10-1)%3]+'.webp';
+  $('big').querySelector('.t').textContent=t.replace('{n}',n)+(name?` ${name}!`:'');
+  $('big').classList.add('on');fanfare();burst(24);
+  setTimeout(()=>$('big').classList.remove('on'),3300); // covers the spoken milestone line (<=2.9s)
+}
+$('big').onclick=()=>$('big').classList.remove('on');
+$('intro').onclick=()=>{$('intro').classList.remove('on');lastAdvance=Date.now()};
+$('scene').onclick=()=>{$('intro').classList.add('on')};
+
+// ---------- SOUND ----------
+let AC=null;function audioInit(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}AC&&AC.resume&&AC.resume()}
+function tone(f,t0,d,type='sine',v=.15){if(!AC||!opts.snd)return;const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t0+d);o.connect(g).connect(AC.destination);o.start(AC.currentTime+t0);o.stop(AC.currentTime+t0+d)}
+function tick(k){tone(520+k*60,0,.08,'triangle',.08)}
+function ding(){const b=660+(stars%5)*40;tone(b,0,.15);tone(b*1.5,.08,.25)}
+function fanfare(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle',.18))}
+
+// ---------- MIC ----------
+let rec=null,micOn=false,consumed={};
+function startMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){$('heard').textContent='הַמִּיקְרוֹפוֹן לֹא נִתְמָךְ בַּדַּפְדְּפָן הַזֶּה. אֶפְשָׁר לִלְחֹץ.';return}
+  rec=new SR();rec.lang='he-IL';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=3;
+  micOn=true;consumed={};$('mic').style.display='flex';
+  rec.onresult=ev=>{
+    for(let r=ev.resultIndex;r<ev.results.length;r++){
+      const res=ev.results[r];
+      // use best alternative, but accept a match from any alternative
+      const alts=[...res].map(a=>a.transcript.trim().split(/\s+/));
+      $('heard').textContent='🎧 '+res[0].transcript;
+      let start=consumed[r]||0, toks=alts[0];
+      if(talking||$('big').classList.contains('on')){consumed[r]=toks.length;continue} // ignore the panda's own voice / overlay time
+      for(let j=start;j<toks.length;j++){
+        if(!W[wi]||busy)break;
+        if(matches(toks[j],W[wi])){consumed[r]=j+1;wordDone();}
+        else if(W[wi+1]&&matches(toks[j],W[wi+1])&&W[wi].core.length<=4){consumed[r]=j+1;wi++;stars++;wordDone();} // skipped a tiny word
+      }
+      if((consumed[r]||0)===start){ // try alternatives on the last token
+        for(const a of alts.slice(1)){const t=a[a.length-1];if(t&&W[wi]&&!busy&&matches(t,W[wi])){consumed[r]=Math.max(start,toks.length);wordDone();break}}
+      }
+    }
+  };
+  rec.onerror=e=>{if(e.error==='not-allowed'){$('heard').textContent='צָרִיךְ לְאַשֵּׁר מִיקְרוֹפוֹן 🎤';micOn=false}};
+  rec.onend=()=>{consumed={};if(micOn&&$('s-read').classList.contains('on'))try{rec.start()}catch(e){}};
+  try{rec.start()}catch(e){}
+}
+function stopMic(){micOn=false;if(rec)try{rec.stop()}catch(e){};$('mic').style.display='none'}
+
+// ---------- AI MIC (server transcription) ----------
+const API='https://nonrealistically-riotistic-jaunita.ngrok-free.dev/plugins/reading-buddy/transcribe';
+// sound-alike letters (transcriber spells by sound): ט=ת, כ=ק=ח, ע=א, ב=ו, ס=שׂ ; drop silent א/ע/ה inside word
+function phon(s){if(!s)return s;s=s.replace(/ט/g,'ת').replace(/[כח]/g,'ק').replace(/ע/g,'א').replace(/ס/g,'ש').replace(/ב/g,'ו');return s[0]+s.slice(1).replace(/[אה]/g,'')}
+function looseMatch(tok,w){
+  // strict: same first sound, similar length, small edit distance
+  const h=phon(skel(tok));if(!h)return false;
+  return targets(w).map(phon).some(t=>{if(!t)return false;if(h===t)return true;
+    if(t.length<=2)return false;
+    if(h[0]!==t[0])return false;
+    if(Math.abs(h.length-t.length)>1)return false;
+    const allow=t.length<=3?0:t.length<=5?1:2;return lev(h,t)<=allow});
+}
+let ai={on:false,stream:null,ctx:null,rec:null,chunks:[],speech:false,lastVoice:0,segStart:0,busy:0,raf:0};
+function pickMime(){for(const m of['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg'])if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m;return ''}
+async function startAI(){
+  if(!store.get('code','')){const c=prompt('קוד גישה (מגיא):');if(!c){$('heard').textContent='אֵין קוֹד, אֶפְשָׁר לִלְחֹץ 👆';return}store.set('code',c.trim())}
+  try{ai.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+  catch(e){$('heard').textContent='צָרִיךְ לְאַשֵּׁר מִיקְרוֹפוֹן 🎤';return}
+  ai.on=true;$('mic').style.display='flex';
+  ai.ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=ai.ctx.createMediaStreamSource(ai.stream),an=ai.ctx.createAnalyser();an.fftSize=1024;src.connect(an);
+  const buf=new Float32Array(an.fftSize);let noise=0.01;
+  newRec();
+  const loop=()=>{ if(!ai.on)return;
+    an.getFloatTimeDomainData(buf);let s=0;for(const v of buf)s+=v*v;const rms=Math.sqrt(s/buf.length);
+    const now=Date.now();
+    if(!ai.speech)noise=noise*.98+rms*.02;
+    const thr=Math.max(.015,noise*2.5);
+    if(talking){ai.lastVoice=0;ai.speech=false;if(now-ai.segStart>300)cut(true);ai.raf=requestAnimationFrame(loop);return}
+    if(rms>thr){
+      if(now-ai.lastVoice>220&&ai.lastVoice&&W[wi]&&!busy){ // new voice burst = next syllable
+        if(ai.burstWord!==wi){ai.burstWord=wi;si=0}else if(si<W[wi].syl.length-1)si++;
+        render();tick(si);
+      }
+      ai.lastVoice=now;if(!ai.speech){ai.speech=true;$('mic').querySelector('.dot').style.background='#20b26b'}}
+    if(ai.speech&&(now-ai.lastVoice>900||now-ai.segStart>8000)){ai.speech=false;$('mic').querySelector('.dot').style.background='';cut()}
+    else if(!ai.speech&&now-ai.segStart>6000)cut(true); // drop silent audio
+    ai.raf=requestAnimationFrame(loop)};
+  loop();
+}
+function newRec(){
+  const m=pickMime();ai.chunks=[];ai.segStart=Date.now();
+  ai.rec=new MediaRecorder(ai.stream,m?{mimeType:m}:{});
+  ai.rec.ondataavailable=e=>{if(e.data.size)ai.chunks.push(e.data)};
+  ai.rec.start();
+}
+function cut(discard){
+  const r=ai.rec,chunks=ai.chunks;
+  r.onstop=()=>{if(!discard&&ai.on)sendSeg(new Blob(chunks,{type:r.mimeType||'audio/webm'}))};
+  try{r.stop()}catch(e){}
+  if(ai.on)newRec();
+}
+async function sendSeg(blob){
+  if(blob.size<3000)return;
+  const startWi=wi;const hint=W.slice(wi,wi+6).map(w=>w.core).join(' ');
+  ai.busy++;$('heard').textContent='🎧 …';
+  try{
+    const r=await fetch(API,{method:'POST',body:blob,headers:{'Content-Type':blob.type,'X-RB-Code':store.get('code',''),'ngrok-skip-browser-warning':'1'}});
+    if(r.status===401){store.set('code','');$('heard').textContent='הַקּוֹד לֹא נָכוֹן';return}
+    const j=await r.json();const text=(j.text||'').trim();
+    $('heard').textContent=text?'🎧 '+text:'';
+    if(!text||wi!==startWi&&wi>startWi+6)return;
+    const fresh=text.split(/[\s,.?!״"]+/).filter(Boolean);
+    if(ai.carryWord!==wi)ai.carry=[];
+    const toks=[...(ai.carry||[]),...fresh];const wBefore=wi;
+    // consume tokens in order; also try joining neighbours (syllable-by-syllable reading)
+    let j2=0;
+    while(j2<toks.length&&W[wi]){
+      let hit=0;
+      for(let n=1;n<=3&&j2+n<=toks.length;n++){const parts=toks.slice(j2,j2+n);if(n>1&&parts.some(p=>skel(p).length>3))break;if(looseMatch(parts.join(''),W[wi])){hit=n;break}}
+      if(!hit&&looseMatch(toks[j2],W[wi])) hit=1;
+      if(hit){await doneAsync();j2+=hit;ai.carry=[]}else j2++;
+    }
+    // keep unmatched pieces for the same word (slow syllable reading split across pauses)
+    if(wi===wBefore){ai.carry=toks.slice(-2).filter(t=>skel(t).length<=3);ai.carryWord=wi}else{ai.carry=[];ai.carryWord=-1}
+  }catch(e){$('heard').textContent='אֵין חִבּוּר, אֶפְשָׁר לִלְחֹץ 👆'}
+  finally{ai.busy--}
+}
+function doneAsync(){return new Promise(res=>{const go=()=>{if(busy)return setTimeout(go,60);wordDone();setTimeout(res,opts.mode==='ai'?380:0)};go()})}
+function stopAI(){ai.on=false;cancelAnimationFrame(ai.raf);try{ai.rec&&ai.rec.state!=='inactive'&&ai.rec.stop()}catch(e){};ai.stream&&ai.stream.getTracks().forEach(t=>t.stop());ai.ctx&&ai.ctx.close();$('mic').style.display='none'}
+
+// ---------- FINISH ----------
+function finish(){
+  stopMic();stopAI();$('scene').classList.remove('on');
+  const secs=Math.round((Date.now()-t0)/1000);
+  const best=store.get('best',{});const prev=best[bestKey(sel)];
+  const rec={times:(prev?.times||0)+1,secs:prev?Math.min(prev.secs,secs):secs,last:secs};
+  best[bestKey(sel)]=rec;store.set('best',best);
+  const name=store.get('name','');
+  const hist=store.get('hist',[]);hist.push({d:new Date().toISOString(),text:curText.id,part:sel,words:W.length,secs,help:helpUsed,mode:opts.mode});store.set('hist',hist.slice(-200));
+  $('end-title').textContent=(name?`${name}, `:'')+G('סִיַּמְתָּ! 🏆','סִיַּמְתְּ! 🏆');
+  const mm=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  let faster='';
+  setTimeout(()=>{if(opts.snd){const k=prev&&secs<prev.last?'faster':'finish';const a=new Audio(vSrc(k,0));a.play().catch(()=>{})}},500);
+  if(prev&&secs<prev.last)faster=`<div class="stat">🚀 ${G('הַיּוֹם הָיִיתָ מָהִיר יוֹתֵר מִפַּעַם קוֹדֶמֶת!','הַיּוֹם הָיִית מְהִירָה יוֹתֵר מִפַּעַם קוֹדֶמֶת!')}</div>`;
+  else if(prev)faster=`<div class="stat">💪 ${G('כָּל קְרִיאָה מְחַזֶּקֶת אוֹתְךָ!','כָּל קְרִיאָה מְחַזֶּקֶת אוֹתָךְ!')}</div>`;
+  $('end-body').innerHTML=`<img src="img/panda/trophy.webp" style="height:200px;animation:pop .6s">
+    <div class="stat">${G('קָרָאתָ','קָרָאת')} <b>${W.length}</b> מִלִּים!</div>
+    <div class="stat">⭐ <b>${stars}</b> כּוֹכָבִים</div>
+    ${faster}
+    <div style="color:#99a;font-size:14px;margin-top:10px">לַהוֹרִים: זְמַן ${mm(secs)}${prev?` · פַּעַם קוֹדֶמֶת ${mm(prev.last)}`:''} · עֶזְרָה 🔈 ${helpUsed} · פַּעַם מִסְפָּר ${rec.times}</div>`;
+  show('s-end');fanfare();setTimeout(()=>burst(30),200);setTimeout(()=>burst(30),700);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>Direction C — Soft Storybook</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FFF8EE;--paper:#FFFFFF;--peach:#FFB085;--peach-d:#E8905F;--mint:#7FD8B8;--mint-d:#5BBB98;--mint-l:#E3F8EF;--sky:#A9D8FF;--lav:#D9CCFF;--sun:#FFD65C;--sun-d:#E3B733;--ink:#3B3350;--ink2:#7E7596;--line:#EFE4D6;--red:#FF7A7A}
+*{box-sizing:border-box}
+body{margin:0;background:#ccb;flex-wrap:wrap;font-family:'Rubik','Varela Round',system-ui,sans-serif;color:var(--ink);display:flex;gap:40px;padding:40px;direction:rtl}
+.phone{width:390px;height:844px;position:relative;overflow:hidden;flex:none;display:flex;flex-direction:column;background:var(--cream)}
+.blob{position:absolute;border-radius:50%;z-index:0;filter:blur(2px)}
+.b1{width:320px;height:320px;background:#FFE3D0;top:-120px;right:-100px}
+.b2{width:260px;height:260px;background:#E2F3FF;bottom:200px;left:-120px}
+.b3{width:200px;height:200px;background:#E7FFF4;bottom:-60px;right:-40px}
+.phone>*{position:relative;z-index:1}
+.phone>.blob{position:absolute;z-index:0}
+.status{height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;font-size:15px;font-weight:700;direction:ltr}
+button{font-family:inherit;border:0;cursor:pointer;color:inherit}
+.btn{border-radius:22px;font-weight:900;font-size:19px;height:60px;display:inline-flex;align-items:center;justify-content:center;gap:8px;position:relative}
+.btn.peach{background:#FF9A5C;color:#fff;box-shadow:0 5px 0 #D4713A;text-shadow:0 1px 0 #0002}
+.btn.mint{background:var(--mint);color:#0f3f2e;box-shadow:0 5px 0 var(--mint-d)}
+.btn.sun{background:var(--sun);color:#4a3600;box-shadow:0 5px 0 var(--sun-d)}
+.btn.soft{background:#fff;color:var(--ink2);box-shadow:0 5px 0 var(--line)}
+.btn.big{height:66px;font-size:23px;width:100%;border-radius:24px}
+/* HOME */
+.top{display:flex;align-items:center;justify-content:space-between;padding:4px 18px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:6px 12px;font-weight:800;font-size:15px;box-shadow:0 3px 0 var(--line)}
+.chip .em{width:26px;height:26px;border-radius:50%;background:var(--sky);display:grid;place-items:center;font-size:15px}
+.hero{display:flex;align-items:flex-end;gap:8px;padding:8px 18px 0;height:170px}
+.hero img{height:160px;filter:drop-shadow(0 8px 10px #0002)}
+.bubble{background:#fff;border-radius:22px 22px 22px 6px;padding:12px 14px;font-weight:800;font-size:18px;line-height:1.5;position:relative;margin-bottom:56px;flex:1;box-shadow:0 4px 0 var(--line)}
+.scroll{flex:1;overflow:hidden;padding:6px 18px 0}
+h2{font-size:15px;font-weight:900;color:var(--ink2);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+h2:after{content:"";flex:1;height:2px;background:var(--line);border-radius:2px}
+.panel{background:#fff;border-radius:24px;padding:12px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 0 var(--line)}
+.panel img{width:64px;height:64px;border-radius:16px;object-fit:cover}
+.panel .t{font-weight:900;font-size:19px;line-height:1.3}
+.panel .s{font-size:14px;color:var(--ink2);margin-top:2px;font-weight:600}
+.bar{height:12px;background:#F2EBE0;border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:50%;background:var(--mint);border-radius:99px}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.part{background:#fff;border-radius:18px;padding:7px 6px 8px;text-align:center;font-weight:900;font-size:16px;box-shadow:0 4px 0 var(--line);border:3px solid #fff}
+.part img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;margin-bottom:6px;display:block}
+.part .chk{font-size:12px;color:#c99a1a;font-weight:800}
+.part.sel{border-color:var(--peach);background:#FFF1E8;box-shadow:0 4px 0 var(--peach-d)}
+.part.sel .chk{color:#b4561e}
+.part.lock{opacity:.7;filter:grayscale(.7)}
+.seg{display:flex;background:#fff;border-radius:20px;padding:4px;gap:4px;box-shadow:0 3px 0 var(--line)}
+.seg button{flex:1;border-radius:16px;height:50px;font-weight:900;font-size:15px;background:transparent;color:var(--ink2)}
+.seg button.on{background:var(--lav);color:#3a2a6e}
+.cta{padding:12px 18px 28px}
+/* READ */
+.hud{display:flex;align-items:center;gap:12px;padding:6px 18px 0}
+.x{width:38px;height:38px;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:18px;font-weight:900;color:var(--ink2);box-shadow:0 3px 0 var(--line)}
+.track{flex:1;height:20px;background:#fff;border-radius:99px;position:relative;box-shadow:inset 0 2px 0 var(--line)}
+.track i{position:absolute;right:0;top:0;height:100%;width:38%;background:linear-gradient(90deg,var(--mint),var(--sky));border-radius:99px}
+.track .ball{position:absolute;right:calc(38% - 16px);top:-8px;font-size:28px;line-height:1}
+.goal{font-size:26px;line-height:1}
+.mic{margin:10px auto 0;background:#fff;border-radius:99px;padding:6px 14px 6px 10px;display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:var(--ink2);width:max-content;box-shadow:0 3px 0 var(--line)}
+.mic .dot{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px #ffd6d6}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 18px;min-height:0}
+.page{width:100%;background:#fff;border-radius:28px;padding:14px 10px 10px;margin-top:12px;text-align:center;box-shadow:0 6px 0 var(--line),0 14px 30px #c9a98a33}
+.word{font-weight:900;font-size:96px;line-height:1.65;display:flex;gap:.03em;direction:rtl;justify-content:center;white-space:nowrap}
+.syl{padding:0 .06em;border-radius:16px;position:relative}
+.syl.past{color:var(--mint-d)}
+.syl.now{color:var(--ink);background:#FFF1E8}
+.syl.now:after{content:"";position:absolute;left:8%;right:8%;bottom:6px;height:8px;border-radius:99px;background:var(--peach)}
+.syl.fut{color:#BDB4A8}
+.hint{color:#9A9185;font-weight:700;font-size:14px;margin-top:2px}
+.ctx{margin-top:12px;font-size:19px;line-height:1.7;color:var(--ink2);text-align:center;font-weight:500}
+.ctx b{color:var(--ink);text-decoration:underline;text-decoration-color:var(--peach);text-underline-offset:6px;text-decoration-thickness:3px}
+.heard{margin-top:12px;font-size:17px;color:var(--ink);font-weight:700;background:#fff;border-radius:14px;padding:8px 14px;box-shadow:0 3px 0 var(--line)}
+.heard b{color:var(--mint-d)}
+.lane{margin-top:auto;display:flex;align-items:flex-end;gap:8px;width:100%;height:170px;padding-bottom:14px}
+.lane img{height:150px;filter:drop-shadow(0 8px 10px #0002)}
+.lane .bubble{margin-bottom:50px;font-size:18px}
+.controls{display:grid;grid-template-columns:64px 64px 1fr;gap:10px;padding:10px 18px 28px;background:#fff;border-radius:28px 28px 0 0;box-shadow:0 -4px 0 var(--line)}
+.controls .btn{height:64px;font-size:22px;padding:0}
+.controls .btn.peach{font-size:24px}
+
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;text-align:center}
+.ms{background:#F3E6DA}
+.mcard{background:#fff;border-radius:30px;padding:10px 20px 24px;width:100%;box-shadow:0 8px 0 var(--line),0 16px 40px #c9a98a44}
+.ms img{height:230px;margin-top:-130px;filter:drop-shadow(0 8px 10px #0002)}
+.big-t{font-size:34px;font-weight:900;line-height:1.3;margin-top:8px}
+.sub-t{font-size:18px;color:var(--ink2);font-weight:700;margin-top:6px}
+.xp{display:inline-flex;gap:8px;align-items:center;background:#FFF4C2;color:#8a6a00;border-radius:999px;padding:8px 18px;font-weight:900;font-size:20px;margin-top:14px}
+.conf{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,var(--sun) 4px,transparent 5px),radial-gradient(circle,var(--mint) 4px,transparent 5px),radial-gradient(circle,var(--peach) 4px,transparent 5px),radial-gradient(circle,var(--lav) 4px,transparent 5px);background-size:120px 160px,150px 130px,170px 190px,140px 150px;background-position:10px 40px,60px 90px,100px 20px,30px 140px;opacity:.9;height:60%;z-index:1}
+.fin .top-t{font-size:30px;font-weight:900;margin-top:4px}
+.fin img{height:210px;margin-top:6px;filter:drop-shadow(0 8px 10px #0002)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:14px}
+.stat{background:#fff;border-radius:20px;padding:12px 8px;text-align:center;box-shadow:0 4px 0 var(--line)}
+.stat .v{font-size:28px;font-weight:900;line-height:1.2}
+.stat .l{font-size:13px;color:var(--ink2);font-weight:700;margin-top:4px}
+.stat.gold .v{color:#c98f00}.stat.green .v{color:var(--mint-d)}.stat.blue .v{color:#4C8FD6}
+.parent{font-size:12px;line-height:1.6;color:#A69C90;margin-top:12px;font-weight:600}
+.fin .cta{display:grid;grid-template-columns:64px 1fr;gap:10px;width:100%;padding:12px 0 28px}
+
+</style></head><body>
+
+<div class="phone" id="home">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="top">
+    <span class="chip"><span class="em">👦</span>גֶּפֶן</span>
+    <span class="chip" style="color:#b4861a">⭐ 120 · 🔥 3</span>
+    <span class="chip" style="padding:6px 10px;color:var(--ink2)">⚙︎</span>
+  </div>
+  <div class="hero">
+    <div class="bubble">שָׁלוֹם גֶּפֶן! בּוֹא נִקְרָא יַחַד! 📖</div>
+    <img src="../../img/panda/wave.webp" alt="">
+  </div>
+  <div class="scroll">
+    <h2>הַסֵּפֶר שֶׁלִּי</h2>
+    <div class="panel">
+      <img src="../../img/para/1.webp" alt="">
+      <div style="flex:1"><div class="t">שׁוֹקוֹלָד פָּרָה</div><div class="s">4 עֲמוּדִים · 2 מִתּוֹכָם קָרָאתָ</div><div class="bar"><i></i></div></div>
+    </div>
+    <h2>אֵיזֶה עַמּוּד הַיּוֹם?</h2>
+    <div class="parts">
+      <div class="part"><img src="../../img/para/1.webp">1<div class="chk">✓ ×3</div></div>
+      <div class="part"><img src="../../img/para/2.webp">2<div class="chk">✓ ×1</div></div>
+      <div class="part sel"><img src="../../img/para/3.webp">3<div class="chk">הַיּוֹם</div></div>
+      <div class="part lock"><img src="../../img/para/4.webp">4<div class="chk">🔒</div></div>
+    </div>
+    <h2>אֵיךְ מִתְקַדְּמִים?</h2>
+    <div class="seg"><button>👆 לוֹחֲצִים</button><button>🎤 מִיקְרוֹפוֹן</button><button class="on">🧠 מִיק׳ חָכָם</button></div>
+  </div>
+  <div class="cta"><button class="btn peach big">בּוֹא נִקְרָא! 📖</button></div>
+</div>
+
+<div class="phone" id="read">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="hud">
+    <span class="x">✕</span>
+    <div class="track"><i></i><span class="ball">⚽</span></div>
+    <span class="goal">🥅</span>
+    <span class="chip" style="padding:5px 10px;color:#b4861a">⭐ 12</span>
+  </div>
+  <div class="mic"><span class="dot"></span>מַקְשִׁיב… קְרָא אֶת הַמִּלָּה</div>
+  <div class="stage">
+    <div class="page"><div class="word"><span class="syl past">שׁוֹ</span><span class="syl now">קוֹ</span><span class="syl fut">לָד</span></div><div class="hint">מִלָּה 8 מִתּוֹךְ 21</div></div>
+    <div class="ctx">הַמַּמְתָּק הָאָהוּב בְּיוֹתֵר בְּיִשְׂרָאֵל הוּא: <b>שׁוֹקוֹלָד</b> פָּרָה.</div>
+    <div class="heard">🎤 שָׁמַעְתִּי: <b>שׁוֹ</b>…</div>
+    <div class="lane">
+      <div class="bubble">יוֹפִי! עַכְשָׁו <b>קוֹ</b> 👏</div>
+      <img src="../../img/panda/read.webp" alt="">
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn soft">→</button>
+    <button class="btn soft">🔈</button>
+    <button class="btn peach">הַבָּא ←</button>
+  </div>
+</div>
+
+<div class="phone ms" id="milestone">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="conf"></div>
+  <div class="center">
+    <div class="mcard">
+      <img src="../../img/panda/cheer.webp" alt="">
+      <div class="big-t">כָּל הַכָּבוֹד!&nbsp; 🌟</div>
+      <div class="sub-t">עוֹד עֶשֶׂר מִלִּים, גֶּפֶן! אַתָּה עַל אֵשׁ 🔥</div>
+      <div class="xp">+10 ⭐</div>
+    </div>
+  </div>
+</div>
+<div class="phone fin" id="finish">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="center" style="justify-content:flex-start;padding-top:6px">
+    <div class="top-t">סִיַּמְתָּ!&nbsp; 🏆</div>
+    <img src="../../img/panda/trophy.webp" alt="">
+    <div class="stats">
+      <div class="stat green"><div class="v">21</div><div class="l">מִלִּים קָרָאתָ</div></div>
+      <div class="stat gold"><div class="v">⭐ 32</div><div class="l">כּוֹכָבִים</div></div>
+      <div class="stat blue"><div class="v">2:40</div><div class="l">זְמַן</div></div>
+      <div class="stat"><div class="v">🚀</div><div class="l">מָהִיר מִפַּעַם קוֹדֶמֶת!</div></div>
+    </div>
+    <div class="parent">לַהוֹרִים: פַּעַם קוֹדֶמֶת 3:15 · עֶזְרָה 🔈 2 · פַּעַם מִסְפָּר 3</div>
+    <div class="cta"><button class="btn soft" style="height:64px;box-shadow:0 5px 0 #D8CBBB;border:2px solid #E4D8C8">🏠</button><button class="btn peach" style="height:64px;background:#FF9A5C;box-shadow:0 5px 0 #D4713A;color:#fff">🔁 עוֹד פַּעַם</button></div>
+  </div>
+</div>
+
+</body></html>

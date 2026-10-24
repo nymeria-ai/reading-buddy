@@ -1,0 +1,192 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>Direction A — Duo Clean</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--green:#58CC02;--green-d:#46A302;--green-l:#D7FFB8;--blue:#1CB0F6;--blue-d:#1899D6;--gold:#FFC800;--gold-d:#E5A800;--ink:#3C3C3C;--ink2:#777;--line:#E5E5E5;--grey:#AFAFAF;--bg:#FFFFFF;--red:#FF4B4B;--purple:#CE82FF}
+*{box-sizing:border-box}
+body{margin:0;background:#9aa;flex-wrap:wrap;font-family:'Rubik',system-ui,sans-serif;color:var(--ink);display:flex;gap:40px;padding:40px;direction:rtl}
+.phone{width:390px;height:844px;background:var(--bg);position:relative;overflow:hidden;border-radius:0;flex:none;display:flex;flex-direction:column}
+.status{height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;font-size:15px;font-weight:700;direction:ltr}
+button{font-family:inherit;border:0;cursor:pointer;color:inherit}
+/* 3D button */
+.b3{border-radius:16px;font-weight:900;font-size:19px;padding:0 18px;height:58px;display:inline-flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em;border-bottom:4px solid rgba(0,0,0,.18);box-shadow:none;position:relative}
+.b3.primary{background:var(--green);color:#fff;border-bottom-color:var(--green-d)}
+.b3.gold{background:var(--gold);color:#5d4300;border-bottom-color:var(--gold-d)}
+.b3.ghost{background:#fff;color:var(--blue);border:2px solid var(--line);border-bottom:4px solid var(--line)}
+.b3.blue{background:var(--blue);color:#fff;border-bottom-color:var(--blue-d)}
+.b3.big{height:64px;font-size:22px;border-radius:18px;width:100%}
+/* HOME */
+.top{display:flex;align-items:center;justify-content:space-between;padding:4px 18px 0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:900;font-size:17px;color:var(--ink2)}
+.pill b{color:var(--ink)}
+.statpill{display:inline-flex;align-items:center;gap:10px;background:#FFF8E0;border:2px solid #FFE6A0;border-radius:999px;padding:6px 14px;font-weight:900;font-size:16px;color:#8a6a00}
+.statpill .sep{width:2px;height:16px;background:#FFE6A0}
+.gear{width:40px;height:40px;border:2px solid var(--line);border-radius:12px;display:grid;place-items:center;color:var(--grey);font-size:22px}
+.avatar{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:4px 12px 4px 6px;font-weight:700;font-size:15px}
+.avatar .em{width:30px;height:30px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-size:17px}
+.hero{display:flex;align-items:flex-end;gap:10px;padding:10px 18px 0;height:160px}
+.hero img{height:150px;filter:drop-shadow(0 6px 0 rgba(0,0,0,.06))}
+.bubble{background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px;font-weight:700;font-size:18px;line-height:1.5;position:relative;margin-bottom:50px;flex:1}
+.bubble:after{content:"";position:absolute;left:-9px;bottom:18px;width:14px;height:14px;background:#fff;border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.scroll{flex:1;overflow:hidden;padding:10px 18px 0}
+h2{font-size:15px;font-weight:900;color:#8F8F8F;letter-spacing:.06em;margin:16px 0 8px;text-transform:uppercase}
+.card{background:#fff;border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px;display:flex;align-items:center;gap:12px}
+.card.sel{border-color:var(--green);background:var(--green-l)}
+.card img{width:64px;height:64px;border-radius:12px;object-fit:cover}
+.card .t{font-weight:900;font-size:19px;line-height:1.3}
+.card .s{font-size:14px;color:var(--ink2);margin-top:2px}
+.bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:50%;background:var(--green);border-radius:99px}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.part{background:#fff;border:2px solid var(--line);border-bottom-width:4px;border-radius:16px;padding:8px 6px 8px;text-align:center;font-weight:900;font-size:16px}
+.part img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;margin-bottom:6px;display:block}
+.part.done{border-color:var(--gold)}
+.part.done .chk{color:var(--gold);font-size:13px}
+.part.sel{border-color:var(--green);background:var(--green-l)}
+.part.lock{opacity:.45}
+.seg{display:flex;background:#fff;border:2px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{flex:1;border-radius:12px;height:48px;font-weight:900;font-size:15px;background:transparent;color:var(--ink2)}
+.seg button.on{background:var(--blue);color:#fff}
+.cta{padding:12px 18px 28px;background:linear-gradient(#fff0,#fff 30%)}
+/* READ */
+.hud{display:flex;align-items:center;gap:12px;padding:6px 18px 0}
+.x{width:36px;height:36px;display:grid;place-items:center;font-size:22px;color:var(--grey);font-weight:900}
+.track{flex:1;height:18px;background:var(--line);border-radius:99px;position:relative}
+.track i{position:absolute;right:0;top:0;height:100%;width:38%;background:var(--green);border-radius:99px}
+.track i:after{content:"";position:absolute;left:10px;right:10px;top:4px;height:4px;border-radius:99px;background:rgba(255,255,255,.35)}
+.track .ball{position:absolute;right:calc(38% - 16px);top:-8px;font-size:28px;line-height:1}
+.goal{font-size:26px;line-height:1}
+.hud .pill{font-size:17px}
+.mic{margin:10px auto 0;background:#fff;border:2px solid var(--line);border-radius:99px;padding:6px 14px 6px 10px;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--ink2);width:max-content}
+.mic .dot{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px #ffd6d6}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 18px;min-height:0}
+.wordcard{width:100%;background:#fff;border:2px solid var(--line);border-bottom-width:5px;border-radius:24px;padding:14px 10px 10px;margin-top:12px;text-align:center}
+.hint{color:#8F8F8F;font-weight:700;font-size:14px;margin-top:2px}
+.word{font-weight:900;font-size:96px;line-height:1.65;display:flex;gap:.03em;direction:rtl;justify-content:center;white-space:nowrap}
+.syl{padding:0 .06em;border-radius:14px;position:relative;color:var(--ink)}
+.syl.past{color:var(--green)}
+.syl.now{color:var(--ink);background:var(--green-l)}
+.syl.now:after{content:"";position:absolute;left:8%;right:8%;bottom:6px;height:8px;border-radius:99px;background:var(--green)}
+.syl.fut{color:#B9B9B9}
+.heard{margin-top:12px;font-size:17px;color:var(--ink2);font-weight:700;background:#F7F7F7;border-radius:12px;padding:8px 14px}
+.ctx{margin-top:12px;font-size:19px;line-height:1.7;color:var(--ink2);text-align:center;font-weight:500}
+.ctx b{color:var(--ink);text-decoration:underline;text-decoration-color:var(--green);text-underline-offset:6px;text-decoration-thickness:3px}
+.heard b{color:var(--green)}
+.lane{margin-top:auto;display:flex;align-items:flex-end;gap:8px;width:100%;height:170px;padding-bottom:10px}
+.lane img{height:150px}
+.lane .bubble{margin-bottom:50px;font-size:18px}
+.controls{display:grid;grid-template-columns:64px 64px 1fr;gap:10px;padding:10px 18px 28px;border-top:2px solid var(--line)}
+.controls .b3{height:64px;font-size:22px;padding:0}
+.controls .b3.primary{font-size:24px}
+.lbl{position:absolute;top:0;left:0;background:#000;color:#fff;font:600 12px system-ui;padding:3px 8px;z-index:9;direction:ltr}
+
+/* MILESTONE + FINISH */
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;text-align:center}
+.ms{background:rgba(60,60,60,.55)}
+.ms .center{justify-content:center}
+.ms .mcard{background:#fff;border-radius:28px;padding:10px 20px 24px;width:100%;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.ms img{height:230px;margin-top:-130px;filter:drop-shadow(0 8px 0 rgba(0,0,0,.08))}
+.ms .big-t{font-size:34px;font-weight:900;color:var(--ink);line-height:1.3;margin-top:8px}
+.ms .sub-t{font-size:18px;color:var(--ink2);font-weight:700;margin-top:6px}
+.ms .xp{display:inline-flex;gap:8px;align-items:center;background:#FFF4C2;color:#8a6a00;border-radius:999px;padding:8px 18px;font-weight:900;font-size:20px;margin-top:14px}
+.conf{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,var(--gold) 4px,transparent 5px),radial-gradient(circle,var(--green) 4px,transparent 5px),radial-gradient(circle,var(--blue) 4px,transparent 5px),radial-gradient(circle,var(--purple) 4px,transparent 5px);background-size:120px 160px,150px 130px,170px 190px,140px 150px;background-position:10px 40px,60px 90px,100px 20px,30px 140px;opacity:.9;height:60%}
+.fin .top-t{font-size:30px;font-weight:900;margin-top:4px}
+.fin img{height:210px;margin-top:6px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:14px}
+.stat{background:#fff;border:2px solid var(--line);border-bottom-width:4px;border-radius:18px;padding:12px 8px;text-align:center}
+.stat .v{font-size:28px;font-weight:900;color:var(--ink);line-height:1.2}
+.stat .l{font-size:13px;color:var(--ink2);font-weight:700;margin-top:4px}
+.stat.gold .v{color:#c98f00}
+.stat.green .v{color:var(--green-d)}
+.stat.blue .v{color:var(--blue-d)}
+.parent{font-size:12px;line-height:1.6;color:var(--grey);margin-top:12px;font-weight:600}
+.fin .cta{display:grid;grid-template-columns:64px 1fr;gap:10px;width:100%;padding:12px 0 28px}
+
+</style></head><body>
+
+<!-- HOME -->
+<div class="phone" id="home">
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="top">
+    <span class="avatar"><span class="em">👦</span>גֶּפֶן</span>
+    <span class="statpill"><span>🔥 <b>3</b></span><span class="sep"></span><span>⭐ <b>120</b></span></span>
+    <span class="gear">⚙︎</span>
+  </div>
+  <div class="hero">
+    <div class="bubble">שָׁלוֹם גֶּפֶן! בּוֹא נִקְרָא יַחַד! ⚽</div>
+    <img src="../../img/panda/wave.webp" alt="">
+  </div>
+  <div class="scroll">
+    <h2>הַסֵּפֶר שֶׁלִּי</h2>
+    <div class="card sel">
+      <img src="../../img/para/1.webp" alt="">
+      <div style="flex:1"><div class="t">שׁוֹקוֹלָד פָּרָה</div><div class="s">4 חֲלָקִים · 2 מִתּוֹכָם קָרָאתָ</div><div class="bar"><i></i></div></div>
+    </div>
+    <h2>מָה קוֹרְאִים הַיּוֹם?</h2>
+    <div class="parts">
+      <div class="part done"><img src="../../img/para/1.webp">1<div class="chk">✓ ×3</div></div>
+      <div class="part done"><img src="../../img/para/2.webp">2<div class="chk">✓ ×1</div></div>
+      <div class="part sel"><img src="../../img/para/3.webp">3<div class="chk" style="color:var(--green)">הַיּוֹם</div></div>
+      <div class="part lock"><img src="../../img/para/4.webp">4<div class="chk">🔒</div></div>
+    </div>
+    <h2>אֵיךְ מִתְקַדְּמִים?</h2>
+    <div class="seg"><button>👆 לוֹחֲצִים</button><button>🎤 מִיקְרוֹפוֹן</button><button class="on">🧠 מִיק׳ חָכָם</button></div>
+  </div>
+  <div class="cta"><button class="b3 primary big">יַאללָה לְהַתְחִיל! ⚽</button></div>
+</div>
+
+<!-- READ -->
+<div class="phone" id="read">
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="hud">
+    <span class="x">✕</span>
+    <div class="track"><i></i><span class="ball">⚽</span></div>
+    <span class="goal">🥅</span>
+    <span class="pill">⭐ <b>12</b></span>
+  </div>
+  <div class="mic"><span class="dot"></span>מַקְשִׁיב… קְרָא אֶת הַמִּלָּה</div>
+  <div class="stage">
+    <div class="wordcard"><div class="word"><span class="syl past">שׁוֹ</span><span class="syl now">קוֹ</span><span class="syl fut">לָד</span></div><div class="hint">מִלָּה 8 מִתּוֹךְ 21</div></div>
+    <div class="ctx">הַמַּמְתָּק הָאָהוּב בְּיוֹתֵר בְּיִשְׂרָאֵל הוּא: <b>שׁוֹקוֹלָד</b> פָּרָה.</div>
+    <div class="heard">🎤 שָׁמַעְתִּי: <b>שׁוֹ</b>…</div>
+    <div class="lane">
+      <div class="bubble">יוֹפִי! עַכְשָׁו <b>קוֹ</b> 👏</div>
+      <img src="../../img/panda/read.webp" alt="">
+    </div>
+  </div>
+  <div class="controls">
+    <button class="b3 ghost">→</button>
+    <button class="b3 ghost">🔈</button>
+    <button class="b3 primary">הַבָּא ←</button>
+  </div>
+</div>
+
+
+<div class="phone ms" id="milestone" style="background:#eee">
+  <div class="conf"></div>
+  <div class="center">
+    <div class="mcard">
+      <img src="../../img/panda/cheer.webp" alt="">
+      <div class="big-t">גּוֹל!&nbsp; ⚽</div>
+      <div class="sub-t">עוֹד עֶשֶׂר מִלִּים, גֶּפֶן! אַתָּה עַל אֵשׁ 🔥</div>
+      <div class="xp">+10 ⭐</div>
+    </div>
+  </div>
+</div>
+<div class="phone fin" id="finish">
+  <div class="status"><span>9:41</span><span>●●● ▲ ▮</span></div>
+  <div class="center" style="justify-content:flex-start;padding-top:6px">
+    <div class="top-t">סִיַּמְתָּ!&nbsp; 🏆</div>
+    <img src="../../img/panda/trophy.webp" alt="">
+    <div class="stats">
+      <div class="stat green"><div class="v">21</div><div class="l">מִלִּים קָרָאתָ</div></div>
+      <div class="stat gold"><div class="v">⭐ 32</div><div class="l">כּוֹכָבִים</div></div>
+      <div class="stat blue"><div class="v">2:40</div><div class="l">זְמַן</div></div>
+      <div class="stat"><div class="v">🚀</div><div class="l">מָהִיר מִפַּעַם קוֹדֶמֶת!</div></div>
+    </div>
+    <div class="parent">לַהוֹרִים: פַּעַם קוֹדֶמֶת 3:15 · עֶזְרָה 🔈 2 · פַּעַם מִסְפָּר 3</div>
+    <div class="cta"><button class="b3 ghost" style="height:64px">🏠</button><button class="b3 primary" style="height:64px">🔁 עוֹד פַּעַם</button></div>
+  </div>
+</div>
+
+</body></html>
