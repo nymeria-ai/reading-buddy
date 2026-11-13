@@ -360,6 +360,20 @@ const BUILTIN = [
 
 אֶת הַחֹר הוּא יָצַר עִם מִכְסֶה שֶׁל פִּלְפֵּל שָׁחֹר.
 הַדּוֹנָאטְס שֶׁאָנוּ מַכִּירִים הַיּוֹם מְצֻפִּים בִּרְטָבִים מְתוּקִים וּמְמֻלָּאִים בִּקְרֶם מָתוֹק.`}
+ ,{id:"sevivon", title:"סְבִיבוֹן", cover:"img/sevivon/1.webp", scenes:["img/sevivon/1.webp","img/sevivon/2.webp","img/sevivon/3.webp","img/sevivon/4.webp"], fixedParts:true, text:`הַסְּבִיבוֹן הַמֻּכָּר לָנוּ הַיּוֹם כְּמִשְׂחָק לְחַג הַחֲנֻכָּה הָיָה מִשְׂחָק מְאוֹד נָפוֹץ בְּאַנְגְּלִיָּה כְּבָר מִלִּפְנֵי 600 שָׁנָה.
+הַסְּבִיבוֹן הָיָה מִשְׂחָק שֶׁהַמְּבֻגָּרִים הָיוּ מְשַׂחֲקִים בּוֹ.
+
+הַמִּשְׂחָק בִּסְבִיבוֹן הִתְפַּשֵּׁט לְהַרְבֵּה מְאוֹד אֲרָצוֹת וְהָפַךְ מִמִּשְׂחָק שֶׁל מְבֻגָּרִים לְמִשְׂחַק יְלָדִים.
+הַיְּהוּדִים נָתְנוּ לַסְּבִיבוֹן שֵׁמוֹת רַבִּים.
+1. כִּרְכָּר מֵהַמִּלָּה לְכַרְכֵּר =לְקַפֵּץ, לִרְקֹד בְּמַעְגָּל.
+2. חֲזַרְזָר עוֹפֶרֶת, 3. גַּלְגְּלָן 4. וְסוֹבֵב.
+
+מְסַפְּרִים שֶׁאִיתָמָר בֶּן אָבִי הַבֵּן שֶׁל אֱלִיעֶזֶר בֶּן יְהוּדָה, הִמְצִיא אֶת הַשֵּׁם סְבִיבוֹן.
+עַל הַפֵּאוֹת שֶׁל הַסְּבִיבוֹן מוֹפִיעוֹת הָאוֹתִיּוֹת נ, ג, ה, פ
+שֶׁפֵּרוּשָׁן: נֵס גָּדוֹל הָיָה פֹּה.
+
+מִכֵּיוָן שֶׁהַסְּבִיבוֹן הוּא מִשְׂחָק שֶׁל חַג הַחֲנֻכָּה הָאוֹתִיּוֹת עָלָיו מְסַפְּרוֹת שֶׁכָּאן [בְּאֶרֶץ יִשְׂרָאֵל] הָיָה נֵס גָּדוֹל.
+חַג שָׂמֵחַ וּמוּאָר`}
 ];
 let LIB=[];
 async function loadLib(){
@@ -389,7 +403,10 @@ function splitParts(text){
 let curText=null, PARTS=[];
 // spoken forms for numbers
 const NUM_SAY = {"40":["40","ארבעים"],"60":["60","שישים"],"1983":["1983","אלף תשע מאות שמונים ושלוש"],
- "1934":["1934","אלף תשע מאות שלושים וארבע"],"90":["90","תשעים"],"15":["15","חמש עשרה","חמישה עשר"],"3":["3","שלושה","שלוש"]};
+ "1934":["1934","אלף תשע מאות שלושים וארבע"],"90":["90","תשעים"],"15":["15","חמש עשרה","חמישה עשר"],"3":["3","שלושה","שלוש"],
+ "600":["600","שש מאות","שש-מאות"],"1":["1","אחת","אחד"],"2":["2","שתיים","שניים","שתים"],"4":["4","ארבע","ארבעה"]};
+// single Hebrew letters (נ, ג, ה, פ on the dreidel) are read by their names
+const LETTER_SAY={"נ":["נון","נ"],"ג":["גימל","ג"],"ה":["הא","הי","ה"],"פ":["פא","פה","פי","פ"]};
 // multi-word spoken numbers: the mic gives one word at a time, so the first spoken word also counts ("אלף…", "חמש…")
 function numForms(n){const f=NUM_SAY[n]||[n];const out=new Set(f);f.forEach(x=>{const w=x.split(' ');if(w.length>1){out.add(w.join(''));out.add(w[0])}});return [...out]}
 
@@ -446,7 +463,7 @@ function tokenize(text){
   text.split(/\s+/).filter(Boolean).forEach(raw=>{
     const m=raw.match(/^([^\u05D0-\u05EA0-9]*)(.*?)([^\u05D0-\u05EA\u05B0-\u05C70-9]*)$/);
     const pre=m[1], core=m[2], post=m[3];
-    words.push({pre,core,post,syl:syllabify(core),end:/[.?!:]/.test(post)});
+    words.push({pre,core,post,syl:syllabify(core),end:/[.?!:]/.test(post)&&!/^\d+$/.test(core)}); // "1." list marker is not a sentence end
   });
   return words;
 }
@@ -463,6 +480,7 @@ function targets(w){
   const plain=w.core.replace(/[\u0591-\u05C7]/g,'').replace(/[־-]/g,'');
   const digits=plain.match(/\d+/);
   if(digits){const pre=plain.replace(/\d+/,'');return numForms(digits[0]).flatMap(n=>[skel(pre+n),skel(n)])}
+  if(LETTER_SAY[plain])return LETTER_SAY[plain].map(skel);
   // hyphenated compound (שְׁטְרָאוּס-עֲלִית) is said as two words: accept the joined form or its first word
   const parts=w.core.replace(/[\u0591-\u05C7]/g,'').split(/[־-]/).filter(Boolean);
   if(parts.length>1)return [skel(w.core),skel(parts[0])];
